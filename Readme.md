@@ -18,8 +18,7 @@ make
 # add csharp binding
 
 ```sh
-ln -s ../../interface/csharp.h csharp.h
-ln -s ../../interface/csharp.cc csharp.cc
+cd isl
 # apply another patch
 export CPATH="$(xcrun --show-sdk-path)/usr/include"
 interface/extract_interface --language=csharp -I. -Iinclude ./all.h > ../ISLSharp/Interop.cs
