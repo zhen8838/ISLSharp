@@ -19,15 +19,8 @@ jobs:
       run: |
         cd isl
         ./autogen.sh
-      shell: bash
-
-    - name: configure
-      run: |
         ./configure --prefix=`pwd`/install --with-clang=no --with-int=imath
-      shell: bash
-
-    - name: build and install
-      run: make install
+        make install
       shell: bash
 
     - uses: actions/upload-artifact@v3
