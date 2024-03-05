@@ -6,7 +6,7 @@ on:
 
 jobs:
   linux-x64:
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         architecture: [ x64 ]
