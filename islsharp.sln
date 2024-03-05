@@ -5,18 +5,29 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISLSharp", "ISLSharp\ISLSharp.csproj", "{204456B5-3DC5-459B-9CEE-C6D1BDDE207B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{3A5D6DF2-3DAA-4F3C-BD22-2C238C143B28}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISLSharp.Tests", "ISLSharp.Tests\ISLSharp.Tests.csproj", "{D4B0A4F1-0F4B-423F-9FAA-E403CEF86B36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{204456B5-3DC5-459B-9CEE-C6D1BDDE207B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{204456B5-3DC5-459B-9CEE-C6D1BDDE207B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{204456B5-3DC5-459B-9CEE-C6D1BDDE207B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{204456B5-3DC5-459B-9CEE-C6D1BDDE207B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4B0A4F1-0F4B-423F-9FAA-E403CEF86B36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4B0A4F1-0F4B-423F-9FAA-E403CEF86B36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4B0A4F1-0F4B-423F-9FAA-E403CEF86B36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4B0A4F1-0F4B-423F-9FAA-E403CEF86B36}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
