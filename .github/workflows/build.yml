@@ -32,6 +32,10 @@ jobs:
       with:
         arch: ${{matrix.config.arch}}
       if: runner.os == 'Windows'
+    
+    - name: Set up build environment (MacOs)
+      run: brew install autoconf
+      if: runner.os == 'macOS'
 
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
