@@ -40,6 +40,6 @@ jobs:
       with: 
         name: ${{ matrix.os }}_${{ matrix.architecture }}
         path: | 
-          $GITHUB_WORKSPACE/isl/install/**/*
+          $GITHUB_WORKSPACE/isl/install
         if-no-files-found: error
   
