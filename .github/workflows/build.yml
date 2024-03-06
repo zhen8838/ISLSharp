@@ -39,7 +39,6 @@ jobs:
     - uses: actions/upload-artifact@v3
       with: 
         name: ${{ matrix.os }}_${{ matrix.architecture }}
-        path: | 
-          ${GITHUB_WORKSPACE}/isl/install
+        path: ${{ github.workspace }}/isl/install
         if-no-files-found: error
   
