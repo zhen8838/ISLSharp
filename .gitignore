@@ -2,3 +2,6 @@ out
 .vscode
 bin
 obj
+artifacts
+NuGet.config
+pack.sh
