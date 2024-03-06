@@ -22,22 +22,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true
+        submodules: recursive
+    
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-    - name: autogen
+    
+    - name: build and install isl
       run: |
         cd isl
         ./autogen.sh
         ./configure --prefix=`pwd`/install --with-clang=no --with-int=imath
-        make install
+        make install -j
       shell: bash
 
     - uses: actions/upload-artifact@v3
-      with:
+      with: 
         name: ${{ matrix.os }}_${{ matrix.architecture }}
-        path: |
-          ./install/lib/**/*
+        path: | 
+          $GITHUB_WORKSPACE/isl/install/lib/**/*
         if-no-files-found: error
   
