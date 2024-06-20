@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 #pragma warning disable
-namespace ISLSharp.isl {
+namespace IntegerSetLibrary {
 
 public class aff : IDisposable, IObject {
   protected IntPtr ptr = IntPtr.Zero;
@@ -2975,6 +2975,32 @@ public bool is_null() {
   return ptr == IntPtr.Zero;
 }
 
+ public basic_map add_constraint(constraint constraint)
+{
+  if (get() == IntPtr.Zero || constraint.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_add_constraint(copy(), constraint.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_add_dims(copy(), type, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public basic_map affine_hull()
 {
   if (get() == IntPtr.Zero) {
@@ -2982,6 +3008,19 @@ public bool is_null() {
 
   }
   var res = Interop.isl_basic_map_affine_hull(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map align_params(space model)
+{
+  if (get() == IntPtr.Zero || model.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_align_params(copy(), model.copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -3094,6 +3133,53 @@ return new basic_map(res);
   return new map(get()).bind_range(tuple);
 }
 
+ public bool can_curry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_can_curry(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool can_range_curry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).can_range_curry();
+}
+
+ public bool can_uncurry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_can_uncurry(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool can_zip()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_can_zip(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public map coalesce()
 {
   if (get() == IntPtr.Zero) {
@@ -3110,20 +3196,51 @@ return new basic_map(res);
   return new map(get()).complement();
 }
 
- public union_map compute_divs()
+ public map compute_divs()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new map(get()).compute_divs();
+  var res = Interop.isl_basic_map_compute_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
- public map curry()
+ public constraint_list constraint_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_get_constraint_list(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public basic_map convex_hull()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new map(get()).curry();
+  return new map(get()).convex_hull();
+}
+
+ public basic_map curry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_curry(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public basic_set deltas()
@@ -3139,6 +3256,19 @@ return new basic_map(res);
 return new basic_set(res);
 }
 
+ public basic_map deltas_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_deltas_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public basic_map detect_equalities()
 {
   if (get() == IntPtr.Zero) {
@@ -3152,12 +3282,77 @@ return new basic_set(res);
 return new basic_map(res);
 }
 
- public set domain()
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_dim(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public id dim_id(dim_type type, uint pos)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new map(get()).domain();
+  return new map(get()).dim_id(type, pos);
+}
+
+ public pw_aff dim_max(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).dim_max(pos);
+}
+
+ public pw_aff dim_min(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).dim_min(pos);
+}
+
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_get_dim_name(get(), type, pos);
+  return Marshal.PtrToStringAnsi(res);
+}
+
+ public aff div(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_get_div(get(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new aff(res);
+}
+
+ public basic_set domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public map domain_factor_domain()
@@ -3176,12 +3371,25 @@ return new basic_map(res);
   return new map(get()).domain_factor_range();
 }
 
- public union_map domain_map()
+ public bool domain_is_wrapping()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new map(get()).domain_map();
+  return new map(get()).domain_is_wrapping();
+}
+
+ public basic_map domain_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_domain_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public union_pw_multi_aff domain_map_union_pw_multi_aff()
@@ -3232,12 +3440,69 @@ return new basic_map(res);
   return new map(get()).domain_tuple_id();
 }
 
- public map drop_unused_params()
+ public basic_map drop_constraints_involving_dims(dim_type type, uint first, uint n)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new map(get()).drop_unused_params();
+  var res = Interop.isl_basic_map_drop_constraints_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map drop_constraints_not_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_drop_constraints_not_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map drop_unused_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_drop_unused_params(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map eliminate(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_eliminate(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map empty(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_empty(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public map eq_at(multi_pw_aff mpa)
@@ -3254,6 +3519,32 @@ return new basic_map(res);
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).eq_at(mupa);
+}
+
+ public mat equalities_matrix(dim_type c1, dim_type c2, dim_type c3, dim_type c4, dim_type c5)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_equalities_matrix(get(), c1, c2, c3, c4, c5);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public basic_map equate(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_equate(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public bool every_map(Func<map, bool> test)
@@ -3288,6 +3579,74 @@ return new basic_map(res);
   return new map(get()).factor_range();
 }
 
+ public int find_dim_by_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).find_dim_by_id(type, id);
+}
+
+ public int find_dim_by_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.find_dim_by_id(type, new id(ctx.Instance, id));
+}
+
+ public int find_dim_by_name(dim_type type, string name)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_find_dim_by_name(get(), type, name);
+  return res;
+}
+
+ public map fix_input_si(uint input, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).fix_input_si(input, value);
+}
+
+ public basic_map fix_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_fix_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map fix_val(dim_type type, uint pos, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_fix_val(copy(), type, pos, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map fix_val(dim_type type, uint pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.fix_val(type, pos, new val(ctx.Instance, v));
+}
+
  public map fixed_power(val exp)
 {
   if (get() == IntPtr.Zero) {
@@ -3302,6 +3661,56 @@ return new basic_map(res);
     throw new ArgumentNullException("NULL input");
   }
   return this.fixed_power(new val(ctx.Instance, exp));
+}
+
+ public map flat_domain_product(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).flat_domain_product(map2);
+}
+
+ public basic_map flat_product(basic_map bmap2)
+{
+  if (get() == IntPtr.Zero || bmap2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_flat_product(copy(), bmap2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map flat_product(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).flat_product(map2);
+}
+
+ public basic_map flat_range_product(basic_map bmap2)
+{
+  if (get() == IntPtr.Zero || bmap2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_flat_range_product(copy(), bmap2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map flat_range_product(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).flat_range_product(map2);
 }
 
  public basic_map flatten()
@@ -3343,6 +3752,22 @@ return new basic_map(res);
 return new basic_map(res);
 }
 
+ public map floordiv_val(val d)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).floordiv_val(d);
+}
+
+ public map floordiv_val(long d)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.floordiv_val(new val(ctx.Instance, d));
+}
+
  public void foreach_basic_map(Action<basic_map> fn)
 {
   if (get() == IntPtr.Zero) {
@@ -3351,12 +3776,142 @@ return new basic_map(res);
 new map(get()).foreach_basic_map(fn);
 }
 
+ public void foreach_constraint(Action<constraint> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Action<constraint> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
+    try {
+      fn_data.func(new (arg_0));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_basic_map_foreach_constraint(get(), fn_lambda, IntPtr.Zero);
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
+}
+
  public void foreach_map(Action<map> fn)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
 new map(get()).foreach_map(fn);
+}
+
+ public static basic_map from_aff(aff aff)
+{
+  if (aff.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_aff(aff.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_aff_list(space domain_space, aff_list list)
+{
+  if (domain_space.is_null() || list.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_aff_list(domain_space.copy(), list.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_constraint(constraint constraint)
+{
+  if (constraint.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_constraint(constraint.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_constraint_matrices(space space, mat eq, mat ineq, dim_type c1, dim_type c2, dim_type c3, dim_type c4, dim_type c5)
+{
+  if (space.is_null() || eq.is_null() || ineq.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_constraint_matrices(space.copy(), eq.copy(), ineq.copy(), c1, c2, c3, c4, c5);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_domain(basic_set bset)
+{
+  if (bset.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_domain(bset.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_domain_and_range(basic_set domain, basic_set range)
+{
+  if (domain.is_null() || range.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_domain_and_range(domain.copy(), range.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_multi_aff(multi_aff maff)
+{
+  if (maff.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_multi_aff(maff.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public static basic_map from_range(basic_set bset)
+{
+  if (bset.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_from_range(bset.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public basic_map gist(basic_map context)
@@ -3388,6 +3943,27 @@ return new basic_map(res);
   return new map(get()).gist(context);
 }
 
+ public map gist_basic_map(basic_map context)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).gist_basic_map(context);
+}
+
+ public basic_map gist_domain(basic_set context)
+{
+  if (get() == IntPtr.Zero || context.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_gist_domain(copy(), context.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public map gist_domain(set context)
 {
   if (get() == IntPtr.Zero) {
@@ -3402,6 +3978,14 @@ return new basic_map(res);
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).gist_domain(uset);
+}
+
+ public basic_map gist_domain(point context)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.gist_domain(new basic_set(context));
 }
 
  public map gist_params(set context)
@@ -3420,6 +4004,27 @@ return new basic_map(res);
   return new map(get()).gist_range(uset);
 }
 
+ public bool has_dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_has_dim_id(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).has_dim_name(type, pos);
+}
+
  public bool has_domain_tuple_id()
 {
   if (get() == IntPtr.Zero) {
@@ -3428,12 +4033,80 @@ return new basic_map(res);
   return new map(get()).has_domain_tuple_id();
 }
 
+ public bool has_equal_space(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).has_equal_space(map2);
+}
+
  public bool has_range_tuple_id()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).has_range_tuple_id();
+}
+
+ public bool has_tuple_name(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).has_tuple_name(type);
+}
+
+ public static basic_map identity(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_identity(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public bool image_is_bounded()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_image_is_bounded(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public mat inequalities_matrix(dim_type c1, dim_type c2, dim_type c3, dim_type c4, dim_type c5)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_inequalities_matrix(get(), c1, c2, c3, c4, c5);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public basic_map insert_dims(dim_type type, uint pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_insert_dims(copy(), type, pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public basic_map intersect(basic_map bmap2)
@@ -3680,12 +4353,38 @@ return new basic_map(res);
   return new map(get()).intersect_range_wrapped_domain(domain);
 }
 
+ public bool involves_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_involves_dims(get(), type, first, n);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool is_bijective()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).is_bijective();
+}
+
+ public bool is_disjoint(basic_map bmap2)
+{
+  if (get() == IntPtr.Zero || bmap2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_is_disjoint(get(), bmap2.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
 }
 
  public bool is_disjoint(map map2)
@@ -3746,6 +4445,14 @@ return new basic_map(res);
   return new map(get()).is_equal(umap2);
 }
 
+ public bool is_identity()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).is_identity();
+}
+
  public bool is_injective()
 {
   if (get() == IntPtr.Zero) {
@@ -3754,12 +4461,51 @@ return new basic_map(res);
   return new map(get()).is_injective();
 }
 
- public bool is_single_valued()
+ public bool is_product()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new map(get()).is_single_valued();
+  return new map(get()).is_product();
+}
+
+ public bool is_rational()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_is_rational(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_single_valued()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_is_single_valued(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_strict_subset(basic_map bmap2)
+{
+  if (get() == IntPtr.Zero || bmap2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_is_strict_subset(get(), bmap2.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
 }
 
  public bool is_strict_subset(map map2)
@@ -3807,12 +4553,46 @@ return new basic_map(res);
   return new map(get()).is_subset(umap2);
 }
 
+ public int is_translation()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).is_translation();
+}
+
+ public bool is_universe()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_is_universe(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool isa_map()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).isa_map();
+}
+
+ public static basic_map less_at(space space, uint pos)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_less_at(space.copy(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public map lex_ge_at(multi_pw_aff mpa)
@@ -3823,12 +4603,28 @@ return new basic_map(res);
   return new map(get()).lex_ge_at(mpa);
 }
 
+ public map lex_ge_map(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).lex_ge_map(map2);
+}
+
  public map lex_gt_at(multi_pw_aff mpa)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).lex_gt_at(mpa);
+}
+
+ public map lex_gt_map(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).lex_gt_map(map2);
 }
 
  public map lex_le_at(multi_pw_aff mpa)
@@ -3839,12 +4635,28 @@ return new basic_map(res);
   return new map(get()).lex_le_at(mpa);
 }
 
+ public map lex_le_map(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).lex_le_map(map2);
+}
+
  public map lex_lt_at(multi_pw_aff mpa)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).lex_lt_at(mpa);
+}
+
+ public map lex_lt_map(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).lex_lt_map(map2);
 }
 
  public map lexmax()
@@ -3897,6 +4709,43 @@ return new map(res);
   return new map(get()).lower_bound(lower);
 }
 
+ public basic_map lower_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_lower_bound_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map lower_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).lower_bound_val(type, pos, value);
+}
+
+ public map lower_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.lower_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public map make_disjoint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).make_disjoint();
+}
+
  public map_list map_list()
 {
   if (get() == IntPtr.Zero) {
@@ -3921,6 +4770,32 @@ return new map(res);
   return new map(get()).min_multi_pw_aff();
 }
 
+ public static basic_map more_at(space space, uint pos)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_more_at(space.copy(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map move_dims(dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_move_dims(copy(), dst_type, dst_pos, src_type, src_pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public int n_basic_map()
 {
   if (get() == IntPtr.Zero) {
@@ -3929,12 +4804,159 @@ return new map(res);
   return new map(get()).n_basic_map();
 }
 
+ public int n_constraint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_n_constraint(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public static basic_map nat_universe(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_nat_universe(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map neg()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_neg(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map oppose(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).oppose(type1, pos1, type2, pos2);
+}
+
+ public basic_map order_ge(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_order_ge(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map order_gt(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_order_gt(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map order_le(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).order_le(type1, pos1, type2, pos2);
+}
+
+ public map order_lt(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).order_lt(type1, pos1, type2, pos2);
+}
+
  public set paramss()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).paramss();
+}
+
+ public val plain_get_val_if_fixed(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).plain_get_val_if_fixed(type, pos);
+}
+
+ public bool plain_is_empty()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_plain_is_empty(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool plain_is_injective()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).plain_is_injective();
+}
+
+ public bool plain_is_single_valued()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).plain_is_single_valued();
+}
+
+ public bool plain_is_universe()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_plain_is_universe(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public basic_map plain_unshifted_simple_hull()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).plain_unshifted_simple_hull();
 }
 
  public basic_map polyhedral_hull()
@@ -4017,6 +5039,19 @@ return new map(res);
   return new map(get()).product(umap2);
 }
 
+ public basic_map project_out(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_project_out(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public map project_out_all_params()
 {
   if (get() == IntPtr.Zero) {
@@ -4049,12 +5084,25 @@ return new map(res);
   return new map(get()).project_out_param(list);
 }
 
- public set range()
+ public basic_set range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public map range_curry()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new map(get()).range();
+  return new map(get()).range_curry();
 }
 
  public map range_factor_domain()
@@ -4073,6 +5121,14 @@ return new map(res);
   return new map(get()).range_factor_range();
 }
 
+ public bool range_is_wrapping()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).range_is_wrapping();
+}
+
  public fixed_box range_lattice_tile()
 {
   if (get() == IntPtr.Zero) {
@@ -4081,12 +5137,17 @@ return new map(res);
   return new map(get()).range_lattice_tile();
 }
 
- public union_map range_map()
+ public basic_map range_map()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new map(get()).range_map();
+  var res = Interop.isl_basic_map_range_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public map range_product(map map2)
@@ -4137,6 +5198,74 @@ return new map(res);
   return new map(get()).range_tuple_id();
 }
 
+ public basic_map remove_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_remove_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map remove_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_remove_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map remove_divs_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_remove_divs_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map remove_inputs(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).remove_inputs(first, n);
+}
+
+ public basic_map remove_redundancies()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_remove_redundancies(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map remove_unknown_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).remove_unknown_divs();
+}
+
  public basic_map reverse()
 {
   if (get() == IntPtr.Zero) {
@@ -4157,6 +5286,35 @@ return new basic_map(res);
 
   }
   var res = Interop.isl_basic_map_sample(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map set_dim_id(dim_type type, uint pos, id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).set_dim_id(type, pos, id);
+}
+
+ public map set_dim_id(dim_type type, uint pos, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_dim_id(type, pos, new id(ctx.Instance, id));
+}
+
+ public basic_map set_dim_name(dim_type type, uint pos, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_set_dim_name(copy(), type, pos, s);
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -4195,12 +5353,59 @@ return new basic_map(res);
   return this.set_range_tuple(new id(ctx.Instance, id));
 }
 
- public space space()
+ public basic_map set_tuple_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_set_tuple_id(copy(), type, id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map set_tuple_id(dim_type type, string id)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new map(get()).space();
+  return this.set_tuple_id(type, new id(ctx.Instance, id));
+}
+
+ public basic_map set_tuple_name(dim_type type, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_set_tuple_name(copy(), type, s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public basic_map simple_hull()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).simple_hull();
+}
+
+ public space space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_get_space(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
 }
 
  public map subtract(map map2)
@@ -4219,6 +5424,14 @@ return new basic_map(res);
   return new map(get()).subtract(umap2);
 }
 
+ public map subtract_domain(set dom)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).subtract_domain(dom);
+}
+
  public union_map subtract_domain(union_set dom)
 {
   if (get() == IntPtr.Zero) {
@@ -4227,12 +5440,41 @@ return new basic_map(res);
   return new map(get()).subtract_domain(dom);
 }
 
+ public map subtract_range(set dom)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).subtract_range(dom);
+}
+
  public union_map subtract_range(union_set dom)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).subtract_range(dom);
+}
+
+ public basic_map sum(basic_map bmap2)
+{
+  if (get() == IntPtr.Zero || bmap2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_sum(copy(), bmap2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map sum(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).sum(map2);
 }
 
  public map_list to_list()
@@ -4251,12 +5493,40 @@ return new basic_map(res);
   return new map(get()).to_union_map();
 }
 
- public map uncurry()
+ public static int total_dim(basic_map bmap)
+{
+  if (bmap.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_total_dim(bmap.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public string tuple_name(dim_type type)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new map(get()).uncurry();
+  var res = Interop.isl_basic_map_get_tuple_name(get(), type);
+  return Marshal.PtrToStringAnsi(res);
+}
+
+ public basic_map uncurry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_uncurry(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public map union(basic_map bmap2)
@@ -4288,12 +5558,41 @@ return new map(res);
   return new map(get()).union(umap2);
 }
 
+ public map union_disjoint(map map2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).union_disjoint(map2);
+}
+
+ public static basic_map universe(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_universe(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public basic_map unshifted_simple_hull()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new map(get()).unshifted_simple_hull();
+}
+
+ public basic_map unshifted_simple_hull_from_map_list(map_list list)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).unshifted_simple_hull_from_map_list(list);
 }
 
  public map upper_bound(multi_pw_aff upper)
@@ -4304,6 +5603,35 @@ return new map(res);
   return new map(get()).upper_bound(upper);
 }
 
+ public basic_map upper_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_map_upper_bound_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public map upper_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new map(get()).upper_bound_val(type, pos, value);
+}
+
+ public map upper_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.upper_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
  public set wrap()
 {
   if (get() == IntPtr.Zero) {
@@ -4312,16 +5640,50 @@ return new map(res);
   return new map(get()).wrap();
 }
 
- public map zip()
+ public basic_map zip()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new map(get()).zip();
+  var res = Interop.isl_basic_map_zip(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
 public override string ToString(){
   var str = Interop.isl_basic_map_to_str(get());
+  return str;
+}
+}
+
+public class basic_map_list : IDisposable, IObject {
+  protected IntPtr ptr = IntPtr.Zero;
+internal basic_map_list(/* __isl_take */ IntPtr ptr)
+ { this.ptr = ptr; }
+
+public void Dispose() {
+  if (!is_null()) {
+    Interop.isl_basic_map_list_free(ptr);
+  }
+}
+
+public IntPtr copy() {
+  return Interop.isl_basic_map_list_copy(ptr);
+}
+
+public IntPtr get() {
+  return ptr;
+}
+
+public bool is_null() {
+  return ptr == IntPtr.Zero;
+}
+
+public override string ToString(){
+  var str = Interop.isl_basic_map_list_to_str(get());
   return str;
 }
 }
@@ -4371,6 +5733,32 @@ public bool is_null() {
   return ptr == IntPtr.Zero;
 }
 
+ public basic_set add_constraint(constraint constraint)
+{
+  if (get() == IntPtr.Zero || constraint.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_add_constraint(copy(), constraint.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_add_dims(copy(), type, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public basic_set affine_hull()
 {
   if (get() == IntPtr.Zero) {
@@ -4378,6 +5766,19 @@ public bool is_null() {
 
   }
   var res = Interop.isl_basic_set_affine_hull(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set align_params(space model)
+{
+  if (get() == IntPtr.Zero || model.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_align_params(copy(), model.copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -4429,12 +5830,33 @@ return new basic_set(res);
   return new set(get()).as_set();
 }
 
+ public basic_set_list basic_set_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).basic_set_list();
+}
+
  public set bind(multi_id tuple)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).bind(tuple);
+}
+
+ public static basic_set box_from_points(point pnt1, point pnt2)
+{
+  if (pnt1.is_null() || pnt2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_box_from_points(pnt1.copy(), pnt2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public set coalesce()
@@ -4445,6 +5867,19 @@ return new basic_set(res);
   return new set(get()).coalesce();
 }
 
+ public basic_set coefficients()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_coefficients(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public set complement()
 {
   if (get() == IntPtr.Zero) {
@@ -4453,12 +5888,38 @@ return new basic_set(res);
   return new set(get()).complement();
 }
 
- public union_set compute_divs()
+ public set compute_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_compute_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public constraint_list constraint_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_constraint_list(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public val count_val()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new set(get()).compute_divs();
+  return new set(get()).count_val();
 }
 
  public basic_set detect_equalities()
@@ -4474,6 +5935,80 @@ return new basic_set(res);
 return new basic_set(res);
 }
 
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_dim(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public bool dim_has_any_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_has_any_lower_bound(type, pos);
+}
+
+ public bool dim_has_any_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_has_any_upper_bound(type, pos);
+}
+
+ public bool dim_has_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_has_lower_bound(type, pos);
+}
+
+ public bool dim_has_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_has_upper_bound(type, pos);
+}
+
+ public id dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_dim_id(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new id(res);
+}
+
+ public bool dim_is_bounded(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_is_bounded(type, pos);
+}
+
+ public pw_aff dim_max(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_max(pos);
+}
+
  public val dim_max_val(int pos)
 {
   if (get() == IntPtr.Zero) {
@@ -4487,6 +6022,14 @@ return new basic_set(res);
 return new val(res);
 }
 
+ public pw_aff dim_min(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).dim_min(pos);
+}
+
  public val dim_min_val(int pos)
 {
   if (get() == IntPtr.Zero) {
@@ -4495,12 +6038,100 @@ return new val(res);
   return new set(get()).dim_min_val(pos);
 }
 
- public set drop_unused_params()
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_dim_name(get(), type, pos);
+  return Marshal.PtrToStringAnsi(res);
+}
+
+ public aff div(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_div(get(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new aff(res);
+}
+
+ public basic_set drop_constraints_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_drop_constraints_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set drop_constraints_not_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_drop_constraints_not_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set drop_unused_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_drop_unused_params(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set eliminate(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_eliminate(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public set eliminate_dims(uint first, uint n)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new set(get()).drop_unused_params();
+  return new set(get()).eliminate_dims(first, n);
+}
+
+ public mat equalities_matrix(dim_type c1, dim_type c2, dim_type c3, dim_type c4)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_equalities_matrix(get(), c1, c2, c3, c4);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
 }
 
  public bool every_set(Func<set, bool> test)
@@ -4519,6 +6150,72 @@ return new val(res);
   return new set(get()).extract_set(space);
 }
 
+ public int find_dim_by_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).find_dim_by_id(type, id);
+}
+
+ public int find_dim_by_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.find_dim_by_id(type, new id(ctx.Instance, id));
+}
+
+ public int find_dim_by_name(dim_type type, string name)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).find_dim_by_name(type, name);
+}
+
+ public set fix_dim_si(uint dim, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).fix_dim_si(dim, value);
+}
+
+ public basic_set fix_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_fix_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set fix_val(dim_type type, uint pos, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_fix_val(copy(), type, pos, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set fix_val(dim_type type, uint pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.fix_val(type, pos, new val(ctx.Instance, v));
+}
+
  public basic_set flatten()
 {
   if (get() == IntPtr.Zero) {
@@ -4532,12 +6229,72 @@ return new val(res);
 return new basic_set(res);
 }
 
+ public map flatten_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).flatten_map();
+}
+
  public void foreach_basic_set(Action<basic_set> fn)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
 new set(get()).foreach_basic_set(fn);
+}
+
+ public void foreach_bound_pair(dim_type type, uint pos, Action<constraint, constraint, basic_set> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Action<constraint, constraint, basic_set> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1, IntPtr arg_2, IntPtr arg_3) => {
+    try {
+      fn_data.func(new (arg_0), new (arg_1), new (arg_2));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_basic_set_foreach_bound_pair(get(), type, pos, fn_lambda, IntPtr.Zero);
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
+}
+
+ public void foreach_constraint(Action<constraint> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Action<constraint> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
+    try {
+      fn_data.func(new (arg_0));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_basic_set_foreach_constraint(get(), fn_lambda, IntPtr.Zero);
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
 }
 
  public void foreach_point(Action<point> fn)
@@ -4554,6 +6311,45 @@ new set(get()).foreach_point(fn);
     throw new ArgumentNullException("NULL input");
   }
 new set(get()).foreach_set(fn);
+}
+
+ public static basic_set from_constraint(constraint constraint)
+{
+  if (constraint.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_from_constraint(constraint.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public static basic_set from_constraint_matrices(space space, mat eq, mat ineq, dim_type c1, dim_type c2, dim_type c3, dim_type c4)
+{
+  if (space.is_null() || eq.is_null() || ineq.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_from_constraint_matrices(space.copy(), eq.copy(), ineq.copy(), c1, c2, c3, c4);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public static basic_set from_multi_aff(multi_aff ma)
+{
+  if (ma.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_from_multi_aff(ma.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public basic_set gist(basic_set context)
@@ -4593,12 +6389,60 @@ return new basic_set(res);
   return this.gist(new basic_set(context));
 }
 
+ public set gist_basic_set(basic_set context)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).gist_basic_set(context);
+}
+
  public set gist_params(set context)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).gist_params(context);
+}
+
+ public bool has_dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).has_dim_id(type, pos);
+}
+
+ public bool has_dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).has_dim_name(type, pos);
+}
+
+ public bool has_equal_space(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).has_equal_space(set2);
+}
+
+ public bool has_tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).has_tuple_id();
+}
+
+ public bool has_tuple_name()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).has_tuple_name();
 }
 
  public map identity()
@@ -4615,6 +6459,32 @@ return new basic_set(res);
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).indicator_function();
+}
+
+ public mat inequalities_matrix(dim_type c1, dim_type c2, dim_type c3, dim_type c4)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_inequalities_matrix(get(), c1, c2, c3, c4);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public basic_set insert_dims(dim_type type, uint pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_insert_dims(copy(), type, pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public map insert_domain(space domain)
@@ -4691,12 +6561,41 @@ return new basic_set(res);
   return this.intersect_params(new basic_set(bset2));
 }
 
+ public bool involves_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_involves_dims(get(), type, first, n);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool involves_locals()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).involves_locals();
+}
+
+ public bool is_bounded()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).is_bounded();
+}
+
+ public bool is_box()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).is_box();
 }
 
  public bool is_disjoint(set set2)
@@ -4763,6 +6662,24 @@ return new basic_set(res);
     throw new ArgumentNullException("NULL input");
   }
   return this.is_equal(new basic_set(bset2));
+}
+
+ public bool is_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).is_params();
+}
+
+ public int is_rational()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_is_rational(get());
+  return res;
 }
 
  public bool is_singleton()
@@ -4855,6 +6772,38 @@ return new basic_set(res);
   return new set(get()).lattice_tile();
 }
 
+ public map lex_ge_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).lex_ge_set(set2);
+}
+
+ public map lex_gt_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).lex_gt_set(set2);
+}
+
+ public map lex_le_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).lex_le_set(set2);
+}
+
+ public map lex_lt_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).lex_lt_set(set2);
+}
+
  public set lexmax()
 {
   if (get() == IntPtr.Zero) {
@@ -4897,6 +6846,32 @@ return new set(res);
   return new set(get()).lexmin_pw_multi_aff();
 }
 
+ public basic_set lift()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_lift(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public local_space local_space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_local_space(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
  public set lower_bound(multi_pw_aff lower)
 {
   if (get() == IntPtr.Zero) {
@@ -4911,6 +6886,43 @@ return new set(res);
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).lower_bound(lower);
+}
+
+ public set lower_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).lower_bound_si(type, pos, value);
+}
+
+ public basic_set lower_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero || value.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_lower_bound_val(copy(), type, pos, value.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set lower_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.lower_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public set make_disjoint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).make_disjoint();
 }
 
  public multi_pw_aff max_multi_pw_aff()
@@ -4945,12 +6957,90 @@ return new set(res);
   return new set(get()).min_val(obj);
 }
 
+ public basic_set move_dims(dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_move_dims(copy(), dst_type, dst_pos, src_type, src_pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public int n_basic_set()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).n_basic_set();
+}
+
+ public int n_constraint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_n_constraint(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public int n_dim()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_n_dim(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public int n_param()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_n_param(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public static basic_set nat_universe(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_nat_universe(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set neg()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_neg(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public pw_aff param_pw_aff_on_domain(id id)
@@ -4982,6 +7072,38 @@ return new set(res);
 return new basic_set(res);
 }
 
+ public val plain_get_val_if_fixed(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).plain_get_val_if_fixed(type, pos);
+}
+
+ public bool plain_is_disjoint(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).plain_is_disjoint(set2);
+}
+
+ public bool plain_is_empty()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).plain_is_empty();
+}
+
+ public bool plain_is_universe()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).plain_is_universe();
+}
+
  public multi_val plain_multi_val_if_fixed()
 {
   if (get() == IntPtr.Zero) {
@@ -4996,6 +7118,19 @@ return new basic_set(res);
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).polyhedral_hull();
+}
+
+ public static basic_set positive_orthant(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_positive_orthant(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public set preimage(multi_aff ma)
@@ -5030,12 +7165,46 @@ return new basic_set(res);
   return new set(get()).preimage(upma);
 }
 
+ public basic_set preimage_multi_aff(multi_aff ma)
+{
+  if (get() == IntPtr.Zero || ma.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_preimage_multi_aff(copy(), ma.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public set product(set set2)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).product(set2);
+}
+
+ public map project_onto_map(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).project_onto_map(type, first, n);
+}
+
+ public basic_set project_out(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_project_out(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public set project_out_all_params()
@@ -5094,6 +7263,108 @@ return new basic_set(res);
   return new set(get()).pw_multi_aff_on_domain(mv);
 }
 
+ public mat reduced_basis()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_reduced_basis(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public basic_set remove_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_remove_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set remove_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_remove_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set remove_divs_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_remove_divs_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set remove_redundancies()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_remove_redundancies(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set remove_unknown_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_remove_unknown_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public set reset_space(space space)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).reset_space(space);
+}
+
+ public set reset_tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).reset_tuple_id();
+}
+
+ public set reset_user()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).reset_user();
+}
+
  public basic_set sample()
 {
   if (get() == IntPtr.Zero) {
@@ -5120,12 +7391,75 @@ return new basic_set(res);
 return new point(res);
 }
 
+ public set set_dim_id(dim_type type, uint pos, id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).set_dim_id(type, pos, id);
+}
+
+ public set set_dim_id(dim_type type, uint pos, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_dim_id(type, pos, new id(ctx.Instance, id));
+}
+
+ public basic_set set_dim_name(dim_type type, uint pos, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_set_dim_name(copy(), type, pos, s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public set_list set_list()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).set_list();
+}
+
+ public basic_set set_tuple_id(id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_set_tuple_id(copy(), id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set set_tuple_id(string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_tuple_id(new id(ctx.Instance, id));
+}
+
+ public basic_set set_tuple_name(string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_set_tuple_name(copy(), s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
 }
 
  public fixed_box simple_fixed_box_hull()
@@ -5136,12 +7470,46 @@ return new point(res);
   return new set(get()).simple_fixed_box_hull();
 }
 
- public space space()
+ public int size()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new set(get()).space();
+  return new set(get()).size();
+}
+
+ public basic_set solutions()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_solutions(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public space space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_space(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public set split_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).split_dims(type, first, n);
 }
 
  public val stride(int pos)
@@ -5168,12 +7536,25 @@ return new point(res);
   return new set(get()).subtract(uset2);
 }
 
- public set_list to_list()
+ public set sum(set set2)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
-  return new set(get()).to_list();
+  return new set(get()).sum(set2);
+}
+
+ public basic_set_list to_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_to_list(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
 }
 
  public set to_set()
@@ -5197,6 +7578,19 @@ return new set(res);
   return new set(get()).to_union_set();
 }
 
+ public static int total_dim(basic_set bset)
+{
+  if (bset.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_total_dim(bset.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
  public map translation()
 {
   if (get() == IntPtr.Zero) {
@@ -5211,6 +7605,24 @@ return new set(res);
     throw new ArgumentNullException("NULL input");
   }
   return new set(get()).tuple_dim();
+}
+
+ public id tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).tuple_id();
+}
+
+ public string tuple_name()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_get_tuple_name(get());
+  return Marshal.PtrToStringAnsi(res);
 }
 
  public set unbind_params(multi_id tuple)
@@ -5266,6 +7678,19 @@ return new set(res);
   return this.union(new basic_set(bset2));
 }
 
+ public static basic_set universe(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_universe(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public basic_set unshifted_simple_hull()
 {
   if (get() == IntPtr.Zero) {
@@ -5274,12 +7699,17 @@ return new set(res);
   return new set(get()).unshifted_simple_hull();
 }
 
- public map unwrap()
+ public basic_map unwrap()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new set(get()).unwrap();
+  var res = Interop.isl_basic_set_unwrap(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public set upper_bound(multi_pw_aff upper)
@@ -5298,6 +7728,43 @@ return new set(res);
   return new set(get()).upper_bound(upper);
 }
 
+ public set upper_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).upper_bound_si(type, pos, value);
+}
+
+ public basic_set upper_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero || value.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_upper_bound_val(copy(), type, pos, value.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set upper_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.upper_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public map wrapped_domain_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new set(get()).wrapped_domain_map();
+}
+
  public set wrapped_reverse()
 {
   if (get() == IntPtr.Zero) {
@@ -5308,6 +7775,797 @@ return new set(res);
 
 public override string ToString(){
   var str = Interop.isl_basic_set_to_str(get());
+  return str;
+}
+}
+
+public class basic_set_list : IDisposable, IObject {
+  protected IntPtr ptr = IntPtr.Zero;
+internal basic_set_list(/* __isl_take */ IntPtr ptr)
+ { this.ptr = ptr; }
+
+ public /* explicit */ basic_set_list(ctx ctx, int n)
+{
+  var res = Interop.isl_basic_set_list_alloc(ctx.get(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+  ptr = res;
+}
+
+ public /* explicit */ basic_set_list(basic_set el)
+{
+  if (el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_from_basic_set(el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+  ptr = res;
+}
+
+public void Dispose() {
+  if (!is_null()) {
+    Interop.isl_basic_set_list_free(ptr);
+  }
+}
+
+public IntPtr copy() {
+  return Interop.isl_basic_set_list_copy(ptr);
+}
+
+public IntPtr get() {
+  return ptr;
+}
+
+public bool is_null() {
+  return ptr == IntPtr.Zero;
+}
+
+ public basic_set_list add(basic_set el)
+{
+  if (get() == IntPtr.Zero || el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_add(copy(), el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public basic_set at(int index)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_get_at(get(), index);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
+ public basic_set_list clear()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_clear(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public basic_set_list coefficients()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_coefficients(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public basic_set_list concat(basic_set_list list2)
+{
+  if (get() == IntPtr.Zero || list2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_concat(copy(), list2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public basic_set_list drop(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_drop(copy(), first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public void Foreach(Action<basic_set> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Action<basic_set> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
+    try {
+      fn_data.func(new (arg_0));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_basic_set_list_foreach(get(), fn_lambda, IntPtr.Zero);
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
+}
+
+ public void foreach_scc(Func<basic_set, basic_set, bool> follows, Action<basic_set_list> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Func<basic_set, basic_set, bool> func,  Exception? eptr) follows_data = (func: follows, eptr: null);
+Func<IntPtr, IntPtr, IntPtr, isl_bool> follows_lambda = (IntPtr arg_0, IntPtr arg_1, IntPtr arg_2) => {
+    try {
+      var ret = follows_data.func(new (arg_0), new (arg_1));
+      return ret ? isl_bool.True : isl_bool.False;
+    } catch (Exception e) {
+      throw e;
+      return isl_bool.Error;
+    }
+  };
+ (Action<basic_set_list> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
+    try {
+      fn_data.func(new (arg_0));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_basic_set_list_foreach_scc(get(), follows_lambda, IntPtr.Zero, fn_lambda, IntPtr.Zero);
+  if (follows_data.eptr is not null) {
+    throw follows_data.eptr;
+  }
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
+}
+
+ public basic_set_list insert(uint pos, basic_set el)
+{
+  if (get() == IntPtr.Zero || el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_insert(copy(), pos, el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public basic_set_list set_at(int index, basic_set el)
+{
+  if (get() == IntPtr.Zero || el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_set_at(copy(), index, el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
+ public int size()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_basic_set_list_size(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+public override string ToString(){
+  var str = Interop.isl_basic_set_list_to_str(get());
+  return str;
+}
+}
+
+public class constraint : IDisposable, IObject {
+  protected IntPtr ptr = IntPtr.Zero;
+internal constraint(/* __isl_take */ IntPtr ptr)
+ { this.ptr = ptr; }
+
+public void Dispose() {
+  if (!is_null()) {
+    Interop.isl_constraint_free(ptr);
+  }
+}
+
+public IntPtr copy() {
+  return Interop.isl_constraint_copy(ptr);
+}
+
+public IntPtr get() {
+  return ptr;
+}
+
+public bool is_null() {
+  return ptr == IntPtr.Zero;
+}
+
+ public aff aff()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_aff(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new aff(res);
+}
+
+ public static constraint alloc_equality(local_space ls)
+{
+  if (ls.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_alloc_equality(ls.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public static constraint alloc_inequality(local_space ls)
+{
+  if (ls.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_alloc_inequality(ls.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public aff bound(dim_type type, int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_bound(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new aff(res);
+}
+
+ public int cmp_last_non_zero(constraint c2)
+{
+  if (get() == IntPtr.Zero || c2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_cmp_last_non_zero(get(), c2.get());
+  return res;
+}
+
+ public val coefficient_val(dim_type type, int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_coefficient_val(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
+}
+
+ public val constant_val()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_constant_val(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
+}
+
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_dim(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_dim_name(get(), type, pos);
+  return Marshal.PtrToStringAnsi(res);
+}
+
+ public aff div(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_div(get(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new aff(res);
+}
+
+ public bool involves_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_involves_dims(get(), type, first, n);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_div_constraint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_is_div_constraint(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_equality()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_is_equality(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_is_lower_bound(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_is_upper_bound(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public local_space local_space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_local_space(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public constraint negate()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_negate(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public constraint set_coefficient_si(dim_type type, int pos, int v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_set_coefficient_si(copy(), type, pos, v);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public constraint set_coefficient_val(dim_type type, int pos, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_set_coefficient_val(copy(), type, pos, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public constraint set_coefficient_val(dim_type type, int pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_coefficient_val(type, pos, new val(ctx.Instance, v));
+}
+
+ public constraint set_constant_si(int v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_set_constant_si(copy(), v);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public constraint set_constant_val(val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_set_constant_val(copy(), v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public constraint set_constant_val(long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_constant_val(new val(ctx.Instance, v));
+}
+
+ public space space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_get_space(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public constraint_list to_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_to_list(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+public override string ToString(){
+  var str = Interop.isl_constraint_to_str(get());
+  return str;
+}
+}
+
+public class constraint_list : IDisposable, IObject {
+  protected IntPtr ptr = IntPtr.Zero;
+internal constraint_list(/* __isl_take */ IntPtr ptr)
+ { this.ptr = ptr; }
+
+ public /* explicit */ constraint_list(ctx ctx, int n)
+{
+  var res = Interop.isl_constraint_list_alloc(ctx.get(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+  ptr = res;
+}
+
+ public /* explicit */ constraint_list(constraint el)
+{
+  if (el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_from_constraint(el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+  ptr = res;
+}
+
+public void Dispose() {
+  if (!is_null()) {
+    Interop.isl_constraint_list_free(ptr);
+  }
+}
+
+public IntPtr copy() {
+  return Interop.isl_constraint_list_copy(ptr);
+}
+
+public IntPtr get() {
+  return ptr;
+}
+
+public bool is_null() {
+  return ptr == IntPtr.Zero;
+}
+
+ public constraint_list add(constraint el)
+{
+  if (get() == IntPtr.Zero || el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_add(copy(), el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public constraint at(int index)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_get_at(get(), index);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint(res);
+}
+
+ public constraint_list clear()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_clear(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public constraint_list concat(constraint_list list2)
+{
+  if (get() == IntPtr.Zero || list2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_concat(copy(), list2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public constraint_list drop(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_drop(copy(), first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public void Foreach(Action<constraint> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Action<constraint> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
+    try {
+      fn_data.func(new (arg_0));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_constraint_list_foreach(get(), fn_lambda, IntPtr.Zero);
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
+}
+
+ public void foreach_scc(Func<constraint, constraint, bool> follows, Action<constraint_list> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+ (Func<constraint, constraint, bool> func,  Exception? eptr) follows_data = (func: follows, eptr: null);
+Func<IntPtr, IntPtr, IntPtr, isl_bool> follows_lambda = (IntPtr arg_0, IntPtr arg_1, IntPtr arg_2) => {
+    try {
+      var ret = follows_data.func(new (arg_0), new (arg_1));
+      return ret ? isl_bool.True : isl_bool.False;
+    } catch (Exception e) {
+      throw e;
+      return isl_bool.Error;
+    }
+  };
+ (Action<constraint_list> func,  Exception? eptr) fn_data = (func: fn, eptr: null);
+Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
+    try {
+      fn_data.func(new (arg_0));
+      return isl_stat.Ok;
+    } catch (Exception e) {
+      throw e;
+      return isl_stat.Error;
+    }
+  };
+  var res = Interop.isl_constraint_list_foreach_scc(get(), follows_lambda, IntPtr.Zero, fn_lambda, IntPtr.Zero);
+  if (follows_data.eptr is not null) {
+    throw follows_data.eptr;
+  }
+  if (fn_data.eptr is not null) {
+    throw fn_data.eptr;
+  }
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return;
+}
+
+ public constraint_list insert(uint pos, constraint el)
+{
+  if (get() == IntPtr.Zero || el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_insert(copy(), pos, el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public constraint_list set_at(int index, constraint el)
+{
+  if (get() == IntPtr.Zero || el.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_set_at(copy(), index, el.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new constraint_list(res);
+}
+
+ public int size()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_constraint_list_size(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+public override string ToString(){
+  var str = Interop.isl_constraint_list_to_str(get());
   return str;
 }
 }
@@ -5441,7 +8699,7 @@ public bool is_null() {
 
   }
   var res = Interop.isl_id_get_name(get());
-  return res;
+  return Marshal.PtrToStringAnsi(res);
 }
 
  public id_list to_list()
@@ -5895,6 +9153,383 @@ public override string ToString(){
 }
 }
 
+public class local_space : IDisposable, IObject {
+  protected IntPtr ptr = IntPtr.Zero;
+internal local_space(/* __isl_take */ IntPtr ptr)
+ { this.ptr = ptr; }
+
+public void Dispose() {
+  if (!is_null()) {
+    Interop.isl_local_space_free(ptr);
+  }
+}
+
+public IntPtr copy() {
+  return Interop.isl_local_space_copy(ptr);
+}
+
+public IntPtr get() {
+  return ptr;
+}
+
+public bool is_null() {
+  return ptr == IntPtr.Zero;
+}
+
+ public local_space add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_add_dims(copy(), type, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_dim(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public id dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_get_dim_id(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new id(res);
+}
+
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_get_dim_name(get(), type, pos);
+  return Marshal.PtrToStringAnsi(res);
+}
+
+ public aff div(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_get_div(get(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new aff(res);
+}
+
+ public local_space domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space drop_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_drop_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public int find_dim_by_name(dim_type type, string name)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_find_dim_by_name(get(), type, name);
+  return res;
+}
+
+ public local_space flatten_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_flatten_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space flatten_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_flatten_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space from_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_from_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public static local_space from_space(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_from_space(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public bool has_dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_has_dim_id(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_has_dim_name(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public local_space insert_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_insert_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space intersect(local_space ls2)
+{
+  if (get() == IntPtr.Zero || ls2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_intersect(copy(), ls2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public bool is_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_is_params(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_set()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_is_set(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public basic_map lifting()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_lifting(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
+ public local_space range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space set_dim_id(dim_type type, uint pos, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_set_dim_id(copy(), type, pos, id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space set_dim_id(dim_type type, uint pos, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_dim_id(type, pos, new id(ctx.Instance, id));
+}
+
+ public local_space set_dim_name(dim_type type, uint pos, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_set_dim_name(copy(), type, pos, s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space set_from_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_set_from_params(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space set_tuple_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_set_tuple_id(copy(), type, id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+ public local_space set_tuple_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_tuple_id(type, new id(ctx.Instance, id));
+}
+
+ public space space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_get_space(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public local_space wrap()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_local_space_wrap(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new local_space(res);
+}
+
+public override string ToString(){
+  var str = Interop.isl_local_space_to_str(get());
+  return str;
+}
+}
+
 public class map : IDisposable, IObject {
   protected IntPtr ptr = IntPtr.Zero;
 internal map(/* __isl_take */ IntPtr ptr)
@@ -5940,6 +9575,32 @@ public bool is_null() {
   return ptr == IntPtr.Zero;
 }
 
+ public map add_constraint(constraint constraint)
+{
+  if (get() == IntPtr.Zero || constraint.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_add_constraint(copy(), constraint.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_add_dims(copy(), type, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public basic_map affine_hull()
 {
   if (get() == IntPtr.Zero) {
@@ -5951,6 +9612,19 @@ public bool is_null() {
     throw new InvalidOperationException();
   }
 return new basic_map(res);
+}
+
+ public map align_params(space model)
+{
+  if (get() == IntPtr.Zero || model.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_align_params(copy(), model.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map apply_domain(map map2)
@@ -6074,6 +9748,58 @@ return new set(res);
 return new set(res);
 }
 
+ public bool can_curry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_can_curry(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool can_range_curry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_can_range_curry(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool can_uncurry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_can_uncurry(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool can_zip()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_can_zip(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public map coalesce()
 {
   if (get() == IntPtr.Zero) {
@@ -6100,12 +9826,30 @@ return new map(res);
 return new map(res);
 }
 
- public union_map compute_divs()
+ public map compute_divs()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new union_map(get()).compute_divs();
+  var res = Interop.isl_map_compute_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public basic_map convex_hull()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_convex_hull(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public map curry()
@@ -6134,6 +9878,19 @@ return new map(res);
 return new set(res);
 }
 
+ public map deltas_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_deltas_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map detect_equalities()
 {
   if (get() == IntPtr.Zero) {
@@ -6145,6 +9902,68 @@ return new set(res);
     throw new InvalidOperationException();
   }
 return new map(res);
+}
+
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_dim(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public id dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_get_dim_id(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new id(res);
+}
+
+ public pw_aff dim_max(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_dim_max(copy(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new pw_aff(res);
+}
+
+ public pw_aff dim_min(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_dim_min(copy(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new pw_aff(res);
+}
+
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_get_dim_name(get(), type, pos);
+  return Marshal.PtrToStringAnsi(res);
 }
 
  public set domain()
@@ -6186,12 +10005,30 @@ return new map(res);
 return new map(res);
 }
 
- public union_map domain_map()
+ public bool domain_is_wrapping()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new union_map(get()).domain_map();
+  var res = Interop.isl_map_domain_is_wrapping(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public map domain_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_domain_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public union_pw_multi_aff domain_map_union_pw_multi_aff()
@@ -6270,6 +10107,32 @@ return new map(res);
 return new id(res);
 }
 
+ public map drop_constraints_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_drop_constraints_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map drop_constraints_not_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_drop_constraints_not_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map drop_unused_params()
 {
   if (get() == IntPtr.Zero) {
@@ -6277,6 +10140,19 @@ return new id(res);
 
   }
   var res = Interop.isl_map_drop_unused_params(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map eliminate(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_eliminate(copy(), type, first, n);
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -6349,6 +10225,19 @@ return new map(res);
   return this.eq_at(new multi_pw_aff(mpa));
 }
 
+ public map equate(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_equate(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public bool every_map(Func<map, bool> test)
 {
   if (get() == IntPtr.Zero) {
@@ -6391,6 +10280,81 @@ return new map(res);
 return new map(res);
 }
 
+ public int find_dim_by_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_find_dim_by_id(get(), type, id.get());
+  return res;
+}
+
+ public int find_dim_by_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.find_dim_by_id(type, new id(ctx.Instance, id));
+}
+
+ public int find_dim_by_name(dim_type type, string name)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_find_dim_by_name(get(), type, name);
+  return res;
+}
+
+ public map fix_input_si(uint input, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_fix_input_si(copy(), input, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map fix_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_fix_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map fix_val(dim_type type, uint pos, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_fix_val(copy(), type, pos, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map fix_val(dim_type type, uint pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.fix_val(type, pos, new val(ctx.Instance, v));
+}
+
  public map fixed_power(val exp)
 {
   if (get() == IntPtr.Zero || exp.is_null()) {
@@ -6410,6 +10374,45 @@ return new map(res);
     throw new ArgumentNullException("NULL input");
   }
   return this.fixed_power(new val(ctx.Instance, exp));
+}
+
+ public map flat_domain_product(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_flat_domain_product(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map flat_product(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_flat_product(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map flat_range_product(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_flat_range_product(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map flatten()
@@ -6451,6 +10454,27 @@ return new map(res);
 return new map(res);
 }
 
+ public map floordiv_val(val d)
+{
+  if (get() == IntPtr.Zero || d.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_floordiv_val(copy(), d.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map floordiv_val(long d)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.floordiv_val(new val(ctx.Instance, d));
+}
+
  public void foreach_basic_map(Action<basic_map> fn)
 {
   if (get() == IntPtr.Zero) {
@@ -6485,6 +10509,71 @@ Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
 new union_map(get()).foreach_map(fn);
 }
 
+ public static map from_aff(aff aff)
+{
+  if (aff.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_from_aff(aff.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map from_domain(set set)
+{
+  if (set.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_from_domain(set.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map from_domain_and_range(set domain, set range)
+{
+  if (domain.is_null() || range.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_from_domain_and_range(domain.copy(), range.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map from_multi_aff(multi_aff maff)
+{
+  if (maff.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_from_multi_aff(maff.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map from_range(set set)
+{
+  if (set.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_from_range(set.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map gist(map context)
 {
   if (get() == IntPtr.Zero || context.is_null()) {
@@ -6512,6 +10601,19 @@ return new map(res);
     throw new ArgumentNullException("NULL input");
   }
   return this.gist(new map(context));
+}
+
+ public map gist_basic_map(basic_map context)
+{
+  if (get() == IntPtr.Zero || context.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_gist_basic_map(copy(), context.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map gist_domain(set context)
@@ -6572,6 +10674,32 @@ return new map(res);
   return new union_map(get()).gist_range(uset);
 }
 
+ public bool has_dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_has_dim_id(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_has_dim_name(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool has_domain_tuple_id()
 {
   if (get() == IntPtr.Zero) {
@@ -6579,6 +10707,19 @@ return new map(res);
 
   }
   var res = Interop.isl_map_has_domain_tuple_id(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_equal_space(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_has_equal_space(get(), map2.get());
   if (res < 0) {
     throw new InvalidOperationException();
   }
@@ -6596,6 +10737,45 @@ return new map(res);
     throw new InvalidOperationException();
   }
   return res == isl_bool.True;
+}
+
+ public bool has_tuple_name(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_has_tuple_name(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public static map identity(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_identity(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map insert_dims(dim_type type, uint pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_insert_dims(copy(), type, pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map intersect(map map2)
@@ -6920,6 +11100,19 @@ return new map(res);
   return this.intersect_range_wrapped_domain(new set(domain));
 }
 
+ public bool involves_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_involves_dims(get(), type, first, n);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool is_bijective()
 {
   if (get() == IntPtr.Zero) {
@@ -7004,6 +11197,19 @@ return new map(res);
   return this.is_equal(new map(map2));
 }
 
+ public bool is_identity()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_is_identity(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool is_injective()
 {
   if (get() == IntPtr.Zero) {
@@ -7011,6 +11217,19 @@ return new map(res);
 
   }
   var res = Interop.isl_map_is_injective(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_product()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_is_product(get());
   if (res < 0) {
     throw new InvalidOperationException();
   }
@@ -7088,12 +11307,35 @@ return new map(res);
   return this.is_subset(new map(map2));
 }
 
+ public int is_translation()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_is_translation(get());
+  return res;
+}
+
  public bool isa_map()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new union_map(get()).isa_map();
+}
+
+ public static map lex_ge(space set_space)
+{
+  if (set_space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_ge(set_space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map lex_ge_at(multi_pw_aff mpa)
@@ -7103,6 +11345,45 @@ return new map(res);
 
   }
   var res = Interop.isl_map_lex_ge_at_multi_pw_aff(copy(), mpa.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map lex_ge_first(space space, uint n)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_ge_first(space.copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_ge_map(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_ge_map(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map lex_gt(space set_space)
+{
+  if (set_space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_gt(set_space.copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -7122,6 +11403,45 @@ return new map(res);
 return new map(res);
 }
 
+ public static map lex_gt_first(space space, uint n)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_gt_first(space.copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_gt_map(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_gt_map(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map lex_le(space set_space)
+{
+  if (set_space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_le(set_space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map lex_le_at(multi_pw_aff mpa)
 {
   if (get() == IntPtr.Zero || mpa.is_null()) {
@@ -7135,6 +11455,45 @@ return new map(res);
 return new map(res);
 }
 
+ public static map lex_le_first(space space, uint n)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_le_first(space.copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_le_map(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_le_map(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map lex_lt(space set_space)
+{
+  if (set_space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_lt(set_space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map lex_lt_at(multi_pw_aff mpa)
 {
   if (get() == IntPtr.Zero || mpa.is_null()) {
@@ -7142,6 +11501,32 @@ return new map(res);
 
   }
   var res = Interop.isl_map_lex_lt_at_multi_pw_aff(copy(), mpa.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public static map lex_lt_first(space space, uint n)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_lt_first(space.copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_lt_map(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lex_lt_map(copy(), map2.copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -7213,6 +11598,53 @@ return new pw_multi_aff(res);
 return new map(res);
 }
 
+ public map lower_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lower_bound_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lower_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero || value.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_lower_bound_val(copy(), type, pos, value.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lower_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.lower_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public map make_disjoint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_make_disjoint(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map_list map_list()
 {
   if (get() == IntPtr.Zero) {
@@ -7247,6 +11679,19 @@ return new multi_pw_aff(res);
 return new multi_pw_aff(res);
 }
 
+ public map move_dims(dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_move_dims(copy(), dst_type, dst_pos, src_type, src_pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public int n_basic_map()
 {
   if (get() == IntPtr.Zero) {
@@ -7260,6 +11705,97 @@ return new multi_pw_aff(res);
   return res;
 }
 
+ public static map nat_universe(space space)
+{
+  if (space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_nat_universe(space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map neg()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_neg(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map oppose(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_oppose(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map order_ge(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_order_ge(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map order_gt(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_order_gt(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map order_le(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_order_le(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map order_lt(dim_type type1, int pos1, dim_type type2, int pos2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_order_lt(copy(), type1, pos1, type2, pos2);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public set paramss()
 {
   if (get() == IntPtr.Zero) {
@@ -7271,6 +11807,84 @@ return new multi_pw_aff(res);
     throw new InvalidOperationException();
   }
 return new set(res);
+}
+
+ public val plain_get_val_if_fixed(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_plain_get_val_if_fixed(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
+}
+
+ public bool plain_is_empty()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_plain_is_empty(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool plain_is_injective()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_plain_is_injective(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool plain_is_single_valued()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_plain_is_single_valued(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool plain_is_universe()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_plain_is_universe(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public basic_map plain_unshifted_simple_hull()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_plain_unshifted_simple_hull(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
 }
 
  public basic_map polyhedral_hull()
@@ -7396,6 +12010,19 @@ return new map(res);
   return this.product(new map(map2));
 }
 
+ public map project_out(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_project_out(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map project_out_all_params()
 {
   if (get() == IntPtr.Zero) {
@@ -7456,6 +12083,19 @@ return new map(res);
 return new set(res);
 }
 
+ public map range_curry()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_range_curry(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map range_factor_domain()
 {
   if (get() == IntPtr.Zero) {
@@ -7482,6 +12122,19 @@ return new map(res);
 return new map(res);
 }
 
+ public bool range_is_wrapping()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_range_is_wrapping(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public fixed_box range_lattice_tile()
 {
   if (get() == IntPtr.Zero) {
@@ -7495,12 +12148,17 @@ return new map(res);
 return new fixed_box(res);
 }
 
- public union_map range_map()
+ public map range_map()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new union_map(get()).range_map();
+  var res = Interop.isl_map_range_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map range_product(map map2)
@@ -7584,6 +12242,84 @@ return new fixed_box(res);
 return new id(res);
 }
 
+ public map remove_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_remove_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map remove_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_remove_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map remove_divs_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_remove_divs_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map remove_inputs(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_remove_inputs(copy(), first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map remove_redundancies()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_remove_redundancies(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map remove_unknown_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_remove_unknown_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public map reverse()
 {
   if (get() == IntPtr.Zero) {
@@ -7608,6 +12344,40 @@ return new map(res);
     throw new InvalidOperationException();
   }
 return new basic_map(res);
+}
+
+ public map set_dim_id(dim_type type, uint pos, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_set_dim_id(copy(), type, pos, id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map set_dim_id(dim_type type, uint pos, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_dim_id(type, pos, new id(ctx.Instance, id));
+}
+
+ public map set_dim_name(dim_type type, uint pos, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_set_dim_name(copy(), type, pos, s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map set_domain_tuple(id id)
@@ -7652,6 +12422,53 @@ return new map(res);
   return this.set_range_tuple(new id(ctx.Instance, id));
 }
 
+ public map set_tuple_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_set_tuple_id(copy(), type, id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map set_tuple_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_tuple_id(type, new id(ctx.Instance, id));
+}
+
+ public map set_tuple_name(dim_type type, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_set_tuple_name(copy(), type, s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public basic_map simple_hull()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_simple_hull(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public space space()
 {
   if (get() == IntPtr.Zero) {
@@ -7694,6 +12511,19 @@ return new map(res);
   return this.subtract(new map(map2));
 }
 
+ public map subtract_domain(set dom)
+{
+  if (get() == IntPtr.Zero || dom.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_subtract_domain(copy(), dom.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public union_map subtract_domain(union_set dom)
 {
   if (get() == IntPtr.Zero) {
@@ -7702,12 +12532,70 @@ return new map(res);
   return new union_map(get()).subtract_domain(dom);
 }
 
+ public map subtract_domain(basic_set dom)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.subtract_domain(new set(dom));
+}
+
+ public map subtract_domain(point dom)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.subtract_domain(new set(dom));
+}
+
+ public map subtract_range(set dom)
+{
+  if (get() == IntPtr.Zero || dom.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_subtract_range(copy(), dom.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public union_map subtract_range(union_set dom)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new union_map(get()).subtract_range(dom);
+}
+
+ public map subtract_range(basic_set dom)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.subtract_range(new set(dom));
+}
+
+ public map subtract_range(point dom)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.subtract_range(new set(dom));
+}
+
+ public map sum(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_sum(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public map_list to_list()
@@ -7734,6 +12622,16 @@ return new map_list(res);
     throw new InvalidOperationException();
   }
 return new union_map(res);
+}
+
+ public string tuple_name(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_get_tuple_name(get(), type);
+  return Marshal.PtrToStringAnsi(res);
 }
 
  public map uncurry()
@@ -7778,6 +12676,19 @@ return new map(res);
   return this.union(new map(map2));
 }
 
+ public map union_disjoint(map map2)
+{
+  if (get() == IntPtr.Zero || map2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_union_disjoint(copy(), map2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public static map universe(space space)
 {
   if (space.is_null()) {
@@ -7804,6 +12715,19 @@ return new map(res);
 return new basic_map(res);
 }
 
+ public basic_map unshifted_simple_hull_from_map_list(map_list list)
+{
+  if (get() == IntPtr.Zero || list.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_unshifted_simple_hull_from_map_list(copy(), list.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_map(res);
+}
+
  public map upper_bound(multi_pw_aff upper)
 {
   if (get() == IntPtr.Zero || upper.is_null()) {
@@ -7815,6 +12739,40 @@ return new basic_map(res);
     throw new InvalidOperationException();
   }
 return new map(res);
+}
+
+ public map upper_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_upper_bound_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map upper_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero || value.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_map_upper_bound_val(copy(), type, pos, value.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map upper_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.upper_bound_val(type, pos, new val(ctx.Instance, value));
 }
 
  public set wrap()
@@ -8075,6 +13033,477 @@ return new map_list(res);
 public override string ToString(){
   var str = Interop.isl_map_list_to_str(get());
   return str;
+}
+}
+
+public class mat : IDisposable, IObject {
+  protected IntPtr ptr = IntPtr.Zero;
+internal mat(/* __isl_take */ IntPtr ptr)
+ { this.ptr = ptr; }
+
+public void Dispose() {
+  if (!is_null()) {
+    Interop.isl_mat_free(ptr);
+  }
+}
+
+public IntPtr copy() {
+  return Interop.isl_mat_copy(ptr);
+}
+
+public IntPtr get() {
+  return ptr;
+}
+
+public bool is_null() {
+  return ptr == IntPtr.Zero;
+}
+
+ public mat add_rows(uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_add_rows(copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat add_zero_cols(uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_add_zero_cols(copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat add_zero_rows(uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_add_zero_rows(copy(), n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat aff_direct_sum(mat right)
+{
+  if (get() == IntPtr.Zero || right.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_aff_direct_sum(copy(), right.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public int cols()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_cols(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public mat concat(mat bot)
+{
+  if (get() == IntPtr.Zero || bot.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_concat(copy(), bot.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat diagonal(mat mat2)
+{
+  if (get() == IntPtr.Zero || mat2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_diagonal(copy(), mat2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat drop_cols(uint col, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_drop_cols(copy(), col, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat drop_rows(uint row, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_drop_rows(copy(), row, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public val element_val(int row, int col)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_get_element_val(get(), row, col);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
+}
+
+ public bool has_linearly_independent_rows(mat mat2)
+{
+  if (get() == IntPtr.Zero || mat2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_has_linearly_independent_rows(get(), mat2.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public int initial_non_zero_cols()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_initial_non_zero_cols(get());
+  return res;
+}
+
+ public mat insert_cols(uint col, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_insert_cols(copy(), col, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat insert_rows(uint row, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_insert_rows(copy(), row, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat insert_zero_cols(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_insert_zero_cols(copy(), first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat insert_zero_rows(uint row, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_insert_zero_rows(copy(), row, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat inverse_product(mat right)
+{
+  if (get() == IntPtr.Zero || right.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_inverse_product(copy(), right.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat lin_to_aff()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_lin_to_aff(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat move_cols(uint dst_col, uint src_col, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_move_cols(copy(), dst_col, src_col, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat normalize()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_normalize(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat normalize_row(int row)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_normalize_row(copy(), row);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat product(mat right)
+{
+  if (get() == IntPtr.Zero || right.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_product(copy(), right.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public int rank()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_rank(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public mat right_inverse()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_right_inverse(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat right_kernel()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_right_kernel(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat row_basis()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_row_basis(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat row_basis_extension(mat mat2)
+{
+  if (get() == IntPtr.Zero || mat2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_row_basis_extension(copy(), mat2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public int rows()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_rows(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public mat set_element_si(int row, int col, int v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_set_element_si(copy(), row, col, v);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat set_element_val(int row, int col, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_set_element_val(copy(), row, col, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat set_element_val(int row, int col, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_element_val(row, col, new val(ctx.Instance, v));
+}
+
+ public mat swap_cols(uint i, uint j)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_swap_cols(copy(), i, j);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat swap_rows(uint i, uint j)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_swap_rows(copy(), i, j);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat transpose()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_transpose(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
+}
+
+ public mat unimodular_complete(int row)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_mat_unimodular_complete(copy(), row);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new mat(res);
 }
 }
 
@@ -11612,12 +17041,49 @@ public bool is_null() {
   return ptr == IntPtr.Zero;
 }
 
+ public basic_set add_constraint(constraint constraint)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).add_constraint(constraint);
+}
+
+ public basic_set add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).add_dims(type, n);
+}
+
+ public point add_ui(dim_type type, int pos, uint val)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_point_add_ui(copy(), type, pos, val);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new point(res);
+}
+
  public basic_set affine_hull()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).affine_hull();
+}
+
+ public basic_set align_params(space model)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).align_params(model);
 }
 
  public basic_set apply(basic_map bmap)
@@ -11660,6 +17126,14 @@ public bool is_null() {
   return new basic_set(get()).as_set();
 }
 
+ public basic_set_list basic_set_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).basic_set_list();
+}
+
  public set bind(multi_id tuple)
 {
   if (get() == IntPtr.Zero) {
@@ -11676,6 +17150,14 @@ public bool is_null() {
   return new basic_set(get()).coalesce();
 }
 
+ public basic_set coefficients()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).coefficients();
+}
+
  public set complement()
 {
   if (get() == IntPtr.Zero) {
@@ -11684,12 +17166,41 @@ public bool is_null() {
   return new basic_set(get()).complement();
 }
 
- public union_set compute_divs()
+ public set compute_divs()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).compute_divs();
+}
+
+ public constraint_list constraint_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).constraint_list();
+}
+
+ public val coordinate_val(dim_type type, int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_point_get_coordinate_val(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
+}
+
+ public val count_val()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).count_val();
 }
 
  public basic_set detect_equalities()
@@ -11700,12 +17211,84 @@ public bool is_null() {
   return new basic_set(get()).detect_equalities();
 }
 
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim(type);
+}
+
+ public bool dim_has_any_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_has_any_lower_bound(type, pos);
+}
+
+ public bool dim_has_any_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_has_any_upper_bound(type, pos);
+}
+
+ public bool dim_has_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_has_lower_bound(type, pos);
+}
+
+ public bool dim_has_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_has_upper_bound(type, pos);
+}
+
+ public id dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_id(type, pos);
+}
+
+ public bool dim_is_bounded(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_is_bounded(type, pos);
+}
+
+ public pw_aff dim_max(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_max(pos);
+}
+
  public val dim_max_val(int pos)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).dim_max_val(pos);
+}
+
+ public pw_aff dim_min(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_min(pos);
 }
 
  public val dim_min_val(int pos)
@@ -11716,12 +17299,68 @@ public bool is_null() {
   return new basic_set(get()).dim_min_val(pos);
 }
 
- public set drop_unused_params()
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).dim_name(type, pos);
+}
+
+ public aff div(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).div(pos);
+}
+
+ public basic_set drop_constraints_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).drop_constraints_involving_dims(type, first, n);
+}
+
+ public basic_set drop_constraints_not_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).drop_constraints_not_involving_dims(type, first, n);
+}
+
+ public basic_set drop_unused_params()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).drop_unused_params();
+}
+
+ public basic_set eliminate(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).eliminate(type, first, n);
+}
+
+ public set eliminate_dims(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).eliminate_dims(first, n);
+}
+
+ public mat equalities_matrix(dim_type c1, dim_type c2, dim_type c3, dim_type c4)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).equalities_matrix(c1, c2, c3, c4);
 }
 
  public bool every_set(Func<set, bool> test)
@@ -11740,6 +17379,62 @@ public bool is_null() {
   return new basic_set(get()).extract_set(space);
 }
 
+ public int find_dim_by_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).find_dim_by_id(type, id);
+}
+
+ public int find_dim_by_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.find_dim_by_id(type, new id(ctx.Instance, id));
+}
+
+ public int find_dim_by_name(dim_type type, string name)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).find_dim_by_name(type, name);
+}
+
+ public set fix_dim_si(uint dim, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).fix_dim_si(dim, value);
+}
+
+ public basic_set fix_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).fix_si(type, pos, value);
+}
+
+ public basic_set fix_val(dim_type type, uint pos, val v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).fix_val(type, pos, v);
+}
+
+ public basic_set fix_val(dim_type type, uint pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.fix_val(type, pos, new val(ctx.Instance, v));
+}
+
  public basic_set flatten()
 {
   if (get() == IntPtr.Zero) {
@@ -11748,12 +17443,36 @@ public bool is_null() {
   return new basic_set(get()).flatten();
 }
 
+ public map flatten_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).flatten_map();
+}
+
  public void foreach_basic_set(Action<basic_set> fn)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
 new basic_set(get()).foreach_basic_set(fn);
+}
+
+ public void foreach_bound_pair(dim_type type, uint pos, Action<constraint, constraint, basic_set> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+new basic_set(get()).foreach_bound_pair(type, pos, fn);
+}
+
+ public void foreach_constraint(Action<constraint> fn)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+new basic_set(get()).foreach_constraint(fn);
 }
 
  public void foreach_point(Action<point> fn)
@@ -11796,12 +17515,60 @@ new basic_set(get()).foreach_set(fn);
   return new basic_set(get()).gist(context);
 }
 
+ public set gist_basic_set(basic_set context)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).gist_basic_set(context);
+}
+
  public set gist_params(set context)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).gist_params(context);
+}
+
+ public bool has_dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).has_dim_id(type, pos);
+}
+
+ public bool has_dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).has_dim_name(type, pos);
+}
+
+ public bool has_equal_space(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).has_equal_space(set2);
+}
+
+ public bool has_tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).has_tuple_id();
+}
+
+ public bool has_tuple_name()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).has_tuple_name();
 }
 
  public map identity()
@@ -11818,6 +17585,22 @@ new basic_set(get()).foreach_set(fn);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).indicator_function();
+}
+
+ public mat inequalities_matrix(dim_type c1, dim_type c2, dim_type c3, dim_type c4)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).inequalities_matrix(c1, c2, c3, c4);
+}
+
+ public basic_set insert_dims(dim_type type, uint pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).insert_dims(type, pos, n);
 }
 
  public map insert_domain(space domain)
@@ -11868,12 +17651,36 @@ new basic_set(get()).foreach_set(fn);
   return new basic_set(get()).intersect_params(params_);
 }
 
+ public bool involves_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).involves_dims(type, first, n);
+}
+
  public bool involves_locals()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).involves_locals();
+}
+
+ public bool is_bounded()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).is_bounded();
+}
+
+ public bool is_box()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).is_box();
 }
 
  public bool is_disjoint(set set2)
@@ -11922,6 +17729,22 @@ new basic_set(get()).foreach_set(fn);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).is_equal(uset2);
+}
+
+ public bool is_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).is_params();
+}
+
+ public int is_rational()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).is_rational();
 }
 
  public bool is_singleton()
@@ -11996,6 +17819,38 @@ new basic_set(get()).foreach_set(fn);
   return new basic_set(get()).lattice_tile();
 }
 
+ public map lex_ge_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lex_ge_set(set2);
+}
+
+ public map lex_gt_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lex_gt_set(set2);
+}
+
+ public map lex_le_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lex_le_set(set2);
+}
+
+ public map lex_lt_set(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lex_lt_set(set2);
+}
+
  public set lexmax()
 {
   if (get() == IntPtr.Zero) {
@@ -12028,6 +17883,22 @@ new basic_set(get()).foreach_set(fn);
   return new basic_set(get()).lexmin_pw_multi_aff();
 }
 
+ public basic_set lift()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lift();
+}
+
+ public local_space local_space()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).local_space();
+}
+
  public set lower_bound(multi_pw_aff lower)
 {
   if (get() == IntPtr.Zero) {
@@ -12042,6 +17913,38 @@ new basic_set(get()).foreach_set(fn);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).lower_bound(lower);
+}
+
+ public set lower_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lower_bound_si(type, pos, value);
+}
+
+ public basic_set lower_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).lower_bound_val(type, pos, value);
+}
+
+ public basic_set lower_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.lower_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public set make_disjoint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).make_disjoint();
 }
 
  public multi_pw_aff max_multi_pw_aff()
@@ -12076,6 +17979,14 @@ new basic_set(get()).foreach_set(fn);
   return new basic_set(get()).min_val(obj);
 }
 
+ public basic_set move_dims(dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).move_dims(dst_type, dst_pos, src_type, src_pos, n);
+}
+
  public multi_val multi_val()
 {
   if (get() == IntPtr.Zero) {
@@ -12095,6 +18006,38 @@ return new multi_val(res);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).n_basic_set();
+}
+
+ public int n_constraint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).n_constraint();
+}
+
+ public int n_dim()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).n_dim();
+}
+
+ public int n_param()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).n_param();
+}
+
+ public basic_set neg()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).neg();
 }
 
  public pw_aff param_pw_aff_on_domain(id id)
@@ -12119,6 +18062,38 @@ return new multi_val(res);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).paramss();
+}
+
+ public val plain_get_val_if_fixed(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).plain_get_val_if_fixed(type, pos);
+}
+
+ public bool plain_is_disjoint(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).plain_is_disjoint(set2);
+}
+
+ public bool plain_is_empty()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).plain_is_empty();
+}
+
+ public bool plain_is_universe()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).plain_is_universe();
 }
 
  public multi_val plain_multi_val_if_fixed()
@@ -12169,12 +18144,36 @@ return new multi_val(res);
   return new basic_set(get()).preimage(upma);
 }
 
+ public basic_set preimage_multi_aff(multi_aff ma)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).preimage_multi_aff(ma);
+}
+
  public set product(set set2)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).product(set2);
+}
+
+ public map project_onto_map(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).project_onto_map(type, first, n);
+}
+
+ public basic_set project_out(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).project_out(type, first, n);
 }
 
  public set project_out_all_params()
@@ -12233,6 +18232,78 @@ return new multi_val(res);
   return new basic_set(get()).pw_multi_aff_on_domain(mv);
 }
 
+ public mat reduced_basis()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).reduced_basis();
+}
+
+ public basic_set remove_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).remove_dims(type, first, n);
+}
+
+ public basic_set remove_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).remove_divs();
+}
+
+ public basic_set remove_divs_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).remove_divs_involving_dims(type, first, n);
+}
+
+ public basic_set remove_redundancies()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).remove_redundancies();
+}
+
+ public basic_set remove_unknown_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).remove_unknown_divs();
+}
+
+ public set reset_space(space space)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).reset_space(space);
+}
+
+ public set reset_tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).reset_tuple_id();
+}
+
+ public set reset_user()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).reset_user();
+}
+
  public basic_set sample()
 {
   if (get() == IntPtr.Zero) {
@@ -12249,12 +18320,81 @@ return new multi_val(res);
   return new basic_set(get()).sample_point();
 }
 
+ public point set_coordinate_val(dim_type type, int pos, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_point_set_coordinate_val(copy(), type, pos, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new point(res);
+}
+
+ public point set_coordinate_val(dim_type type, int pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_coordinate_val(type, pos, new val(ctx.Instance, v));
+}
+
+ public set set_dim_id(dim_type type, uint pos, id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).set_dim_id(type, pos, id);
+}
+
+ public set set_dim_id(dim_type type, uint pos, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_dim_id(type, pos, new id(ctx.Instance, id));
+}
+
+ public basic_set set_dim_name(dim_type type, uint pos, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).set_dim_name(type, pos, s);
+}
+
  public set_list set_list()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).set_list();
+}
+
+ public basic_set set_tuple_id(id id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).set_tuple_id(id);
+}
+
+ public basic_set set_tuple_id(string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_tuple_id(new id(ctx.Instance, id));
+}
+
+ public basic_set set_tuple_name(string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).set_tuple_name(s);
 }
 
  public fixed_box simple_fixed_box_hull()
@@ -12265,6 +18405,22 @@ return new multi_val(res);
   return new basic_set(get()).simple_fixed_box_hull();
 }
 
+ public int size()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).size();
+}
+
+ public basic_set solutions()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).solutions();
+}
+
  public space space()
 {
   if (get() == IntPtr.Zero) {
@@ -12273,12 +18429,33 @@ return new multi_val(res);
   return new basic_set(get()).space();
 }
 
+ public set split_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).split_dims(type, first, n);
+}
+
  public val stride(int pos)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).stride(pos);
+}
+
+ public point sub_ui(dim_type type, int pos, uint val)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_point_sub_ui(copy(), type, pos, val);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new point(res);
 }
 
  public set subtract(set set2)
@@ -12297,7 +18474,15 @@ return new multi_val(res);
   return new basic_set(get()).subtract(uset2);
 }
 
- public set_list to_list()
+ public set sum(set set2)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).sum(set2);
+}
+
+ public basic_set_list to_list()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
@@ -12340,6 +18525,22 @@ return new set(res);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).tuple_dim();
+}
+
+ public id tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).tuple_id();
+}
+
+ public string tuple_name()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).tuple_name();
 }
 
  public set unbind_params(multi_id tuple)
@@ -12390,7 +18591,7 @@ return new set(res);
   return new basic_set(get()).unshifted_simple_hull();
 }
 
- public map unwrap()
+ public basic_map unwrap()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
@@ -12412,6 +18613,38 @@ return new set(res);
     throw new ArgumentNullException("NULL input");
   }
   return new basic_set(get()).upper_bound(upper);
+}
+
+ public set upper_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).upper_bound_si(type, pos, value);
+}
+
+ public basic_set upper_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).upper_bound_val(type, pos, value);
+}
+
+ public basic_set upper_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.upper_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public map wrapped_domain_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return new basic_set(get()).wrapped_domain_map();
 }
 
  public set wrapped_reverse()
@@ -16888,7 +23121,7 @@ return new schedule_node_band(res);
 return new schedule_node_band(res);
 }
 
- public schedule_node_band member_set_ast_loop_type(int pos, int type)
+ public schedule_node_band member_set_ast_loop_type(int pos, ast_loop_type type)
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
@@ -17166,6 +23399,32 @@ public bool is_null() {
   return ptr == IntPtr.Zero;
 }
 
+ public set add_constraint(constraint constraint)
+{
+  if (get() == IntPtr.Zero || constraint.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_add_constraint(copy(), constraint.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_add_dims(copy(), type, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public basic_set affine_hull()
 {
   if (get() == IntPtr.Zero) {
@@ -17177,6 +23436,19 @@ public bool is_null() {
     throw new InvalidOperationException();
   }
 return new basic_set(res);
+}
+
+ public set align_params(space model)
+{
+  if (get() == IntPtr.Zero || model.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_align_params(copy(), model.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
 }
 
  public set apply(map map)
@@ -17229,6 +23501,19 @@ return new pw_multi_aff(res);
   return new union_set(get()).as_set();
 }
 
+ public basic_set_list basic_set_list()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_get_basic_set_list(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set_list(res);
+}
+
  public set bind(multi_id tuple)
 {
   if (get() == IntPtr.Zero || tuple.is_null()) {
@@ -17236,6 +23521,19 @@ return new pw_multi_aff(res);
 
   }
   var res = Interop.isl_set_bind(copy(), tuple.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public static set box_from_points(point pnt1, point pnt2)
+{
+  if (pnt1.is_null() || pnt2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_box_from_points(pnt1.copy(), pnt2.copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -17255,6 +23553,19 @@ return new set(res);
 return new set(res);
 }
 
+ public basic_set coefficients()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_coefficients(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public set complement()
 {
   if (get() == IntPtr.Zero) {
@@ -17268,12 +23579,30 @@ return new set(res);
 return new set(res);
 }
 
- public union_set compute_divs()
+ public set compute_divs()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
+
   }
-  return new union_set(get()).compute_divs();
+  var res = Interop.isl_set_compute_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public val count_val()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_count_val(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
 }
 
  public set detect_equalities()
@@ -17289,6 +23618,110 @@ return new set(res);
 return new set(res);
 }
 
+ public int dim(dim_type type)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim(get(), type);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public bool dim_has_any_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_has_any_lower_bound(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool dim_has_any_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_has_any_upper_bound(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool dim_has_lower_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_has_lower_bound(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool dim_has_upper_bound(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_has_upper_bound(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public id dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_get_dim_id(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new id(res);
+}
+
+ public bool dim_is_bounded(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_is_bounded(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public pw_aff dim_max(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_max(copy(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new pw_aff(res);
+}
+
  public val dim_max_val(int pos)
 {
   if (get() == IntPtr.Zero) {
@@ -17300,6 +23733,19 @@ return new set(res);
     throw new InvalidOperationException();
   }
 return new val(res);
+}
+
+ public pw_aff dim_min(int pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_dim_min(copy(), pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new pw_aff(res);
 }
 
  public val dim_min_val(int pos)
@@ -17315,6 +23761,42 @@ return new val(res);
 return new val(res);
 }
 
+ public string dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_get_dim_name(get(), type, pos);
+  return Marshal.PtrToStringAnsi(res);
+}
+
+ public set drop_constraints_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_drop_constraints_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set drop_constraints_not_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_drop_constraints_not_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set drop_unused_params()
 {
   if (get() == IntPtr.Zero) {
@@ -17322,6 +23804,32 @@ return new val(res);
 
   }
   var res = Interop.isl_set_drop_unused_params(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set eliminate(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_eliminate(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set eliminate_dims(uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_eliminate_dims(copy(), first, n);
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -17357,6 +23865,81 @@ return new set(res);
   return new union_set(get()).extract_set(space);
 }
 
+ public int find_dim_by_id(dim_type type, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_find_dim_by_id(get(), type, id.get());
+  return res;
+}
+
+ public int find_dim_by_id(dim_type type, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.find_dim_by_id(type, new id(ctx.Instance, id));
+}
+
+ public int find_dim_by_name(dim_type type, string name)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_find_dim_by_name(get(), type, name);
+  return res;
+}
+
+ public set fix_dim_si(uint dim, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_fix_dim_si(copy(), dim, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set fix_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_fix_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set fix_val(dim_type type, uint pos, val v)
+{
+  if (get() == IntPtr.Zero || v.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_fix_val(copy(), type, pos, v.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set fix_val(dim_type type, uint pos, long v)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.fix_val(type, pos, new val(ctx.Instance, v));
+}
+
  public set flatten()
 {
   if (get() == IntPtr.Zero) {
@@ -17368,6 +23951,19 @@ return new set(res);
     throw new InvalidOperationException();
   }
 return new set(res);
+}
+
+ public map flatten_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_flatten_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public void foreach_basic_set(Action<basic_set> fn)
@@ -17430,6 +24026,19 @@ Func<IntPtr, IntPtr, isl_stat> fn_lambda = (IntPtr arg_0, IntPtr arg_1) => {
 new union_set(get()).foreach_set(fn);
 }
 
+ public static set from_multi_aff(multi_aff ma)
+{
+  if (ma.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_from_multi_aff(ma.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set gist(set context)
 {
   if (get() == IntPtr.Zero || context.is_null()) {
@@ -17467,6 +24076,19 @@ return new set(res);
   return this.gist(new set(context));
 }
 
+ public set gist_basic_set(basic_set context)
+{
+  if (get() == IntPtr.Zero || context.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_gist_basic_set(copy(), context.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set gist_params(set context)
 {
   if (get() == IntPtr.Zero || context.is_null()) {
@@ -17478,6 +24100,71 @@ return new set(res);
     throw new InvalidOperationException();
   }
 return new set(res);
+}
+
+ public bool has_dim_id(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_has_dim_id(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_dim_name(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_has_dim_name(get(), type, pos);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_equal_space(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_has_equal_space(get(), set2.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_has_tuple_id(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool has_tuple_name()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_has_tuple_name(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
 }
 
  public map identity()
@@ -17504,6 +24191,19 @@ return new map(res);
     throw new InvalidOperationException();
   }
 return new pw_aff(res);
+}
+
+ public set insert_dims(dim_type type, uint pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_insert_dims(copy(), type, pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
 }
 
  public map insert_domain(space domain)
@@ -17569,6 +24269,19 @@ return new set(res);
 return new set(res);
 }
 
+ public bool involves_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_involves_dims(get(), type, first, n);
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
  public bool involves_locals()
 {
   if (get() == IntPtr.Zero) {
@@ -17576,6 +24289,32 @@ return new set(res);
 
   }
   var res = Interop.isl_set_involves_locals(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_bounded()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_is_bounded(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool is_box()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_is_box(get());
   if (res < 0) {
     throw new InvalidOperationException();
   }
@@ -17667,6 +24406,19 @@ return new set(res);
     throw new ArgumentNullException("NULL input");
   }
   return this.is_equal(new set(set2));
+}
+
+ public bool is_params()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_is_params(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
 }
 
  public bool is_singleton()
@@ -17790,6 +24542,58 @@ return new set(res);
 return new fixed_box(res);
 }
 
+ public map lex_ge_set(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lex_ge_set(copy(), set2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_gt_set(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lex_gt_set(copy(), set2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_le_set(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lex_le_set(copy(), set2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public map lex_lt_set(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lex_lt_set(copy(), set2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
  public set lexmax()
 {
   if (get() == IntPtr.Zero) {
@@ -17842,6 +24646,19 @@ return new set(res);
 return new pw_multi_aff(res);
 }
 
+ public set lift()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lift(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set lower_bound(multi_pw_aff lower)
 {
   if (get() == IntPtr.Zero || lower.is_null()) {
@@ -17862,6 +24679,53 @@ return new set(res);
 
   }
   var res = Interop.isl_set_lower_bound_multi_val(copy(), lower.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set lower_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lower_bound_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set lower_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero || value.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_lower_bound_val(copy(), type, pos, value.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set lower_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.lower_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public set make_disjoint()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_make_disjoint(copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -17920,6 +24784,19 @@ return new multi_pw_aff(res);
 return new val(res);
 }
 
+ public set move_dims(dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_move_dims(copy(), dst_type, dst_pos, src_type, src_pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public int n_basic_set()
 {
   if (get() == IntPtr.Zero) {
@@ -17931,6 +24808,45 @@ return new val(res);
     throw new InvalidOperationException();
   }
   return res;
+}
+
+ public int n_dim()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_n_dim(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public int n_param()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_n_param(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res;
+}
+
+ public set neg()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_neg(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
 }
 
  public pw_aff param_pw_aff_on_domain(id id)
@@ -17965,6 +24881,58 @@ return new pw_aff(res);
     throw new InvalidOperationException();
   }
 return new set(res);
+}
+
+ public val plain_get_val_if_fixed(dim_type type, uint pos)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_plain_get_val_if_fixed(get(), type, pos);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new val(res);
+}
+
+ public bool plain_is_disjoint(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_plain_is_disjoint(get(), set2.get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool plain_is_empty()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_plain_is_empty(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
+}
+
+ public bool plain_is_universe()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_plain_is_universe(get());
+  if (res < 0) {
+    throw new InvalidOperationException();
+  }
+  return res == isl_bool.True;
 }
 
  public multi_val plain_multi_val_if_fixed()
@@ -18053,6 +25021,32 @@ return new set(res);
 return new set(res);
 }
 
+ public map project_onto_map(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_project_onto_map(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
+}
+
+ public set project_out(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_project_out(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set project_out_all_params()
 {
   if (get() == IntPtr.Zero) {
@@ -18134,6 +25128,110 @@ return new pw_aff(res);
 return new pw_multi_aff(res);
 }
 
+ public set remove_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_remove_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set remove_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_remove_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set remove_divs_involving_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_remove_divs_involving_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set remove_redundancies()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_remove_redundancies(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set remove_unknown_divs()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_remove_unknown_divs(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set reset_space(space space)
+{
+  if (get() == IntPtr.Zero || space.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_reset_space(copy(), space.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set reset_tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_reset_tuple_id(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set reset_user()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_reset_user(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public basic_set sample()
 {
   if (get() == IntPtr.Zero) {
@@ -18160,12 +25258,80 @@ return new basic_set(res);
 return new point(res);
 }
 
+ public set set_dim_id(dim_type type, uint pos, id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_set_dim_id(copy(), type, pos, id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set set_dim_id(dim_type type, uint pos, string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_dim_id(type, pos, new id(ctx.Instance, id));
+}
+
+ public set set_dim_name(dim_type type, uint pos, string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_set_dim_name(copy(), type, pos, s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set_list set_list()
 {
   if (get() == IntPtr.Zero) {
     throw new ArgumentNullException("NULL input");
   }
   return new union_set(get()).set_list();
+}
+
+ public set set_tuple_id(id id)
+{
+  if (get() == IntPtr.Zero || id.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_set_tuple_id(copy(), id.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set set_tuple_id(string id)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.set_tuple_id(new id(ctx.Instance, id));
+}
+
+ public set set_tuple_name(string s)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_set_tuple_name(copy(), s);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
 }
 
  public fixed_box simple_fixed_box_hull()
@@ -18181,6 +25347,29 @@ return new point(res);
 return new fixed_box(res);
 }
 
+ public int size()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_size(get());
+  return res;
+}
+
+ public basic_set solutions()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_solutions(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new basic_set(res);
+}
+
  public space space()
 {
   if (get() == IntPtr.Zero) {
@@ -18192,6 +25381,19 @@ return new fixed_box(res);
     throw new InvalidOperationException();
   }
 return new space(res);
+}
+
+ public set split_dims(dim_type type, uint first, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_split_dims(copy(), type, first, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
 }
 
  public val stride(int pos)
@@ -18244,6 +25446,19 @@ return new set(res);
   return this.subtract(new set(set2));
 }
 
+ public set sum(set set2)
+{
+  if (get() == IntPtr.Zero || set2.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_sum(copy(), set2.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
  public set_list to_list()
 {
   if (get() == IntPtr.Zero) {
@@ -18294,6 +25509,29 @@ return new map(res);
     throw new InvalidOperationException();
   }
   return res;
+}
+
+ public id tuple_id()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_get_tuple_id(get());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new id(res);
+}
+
+ public string tuple_name()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_get_tuple_name(get());
+  return Marshal.PtrToStringAnsi(res);
 }
 
  public set unbind_params(multi_id tuple)
@@ -18422,6 +25660,53 @@ return new set(res);
     throw new InvalidOperationException();
   }
 return new set(res);
+}
+
+ public set upper_bound_si(dim_type type, uint pos, int value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_upper_bound_si(copy(), type, pos, value);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set upper_bound_val(dim_type type, uint pos, val value)
+{
+  if (get() == IntPtr.Zero || value.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_upper_bound_val(copy(), type, pos, value.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
+ public set upper_bound_val(dim_type type, uint pos, long value)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+  }
+  return this.upper_bound_val(type, pos, new val(ctx.Instance, value));
+}
+
+ public map wrapped_domain_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_wrapped_domain_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new map(res);
 }
 
  public set wrapped_reverse()
@@ -18666,6 +25951,19 @@ return new set_list(res);
   return res;
 }
 
+ public set union()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_set_list_union(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new set(res);
+}
+
 public override string ToString(){
   var str = Interop.isl_set_list_to_str(get());
   return str;
@@ -18702,6 +26000,19 @@ public IntPtr get() {
 
 public bool is_null() {
   return ptr == IntPtr.Zero;
+}
+
+ public space add_dims(dim_type type, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_add_dims(copy(), type, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
 }
 
  public space add_named_tuple(id tuple_id, uint dim)
@@ -18785,6 +26096,45 @@ return new space(res);
 return new space(res);
 }
 
+ public space domain_factor_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_domain_factor_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space domain_factor_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_domain_factor_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space domain_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_domain_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
  public multi_aff domain_map_multi_aff()
 {
   if (get() == IntPtr.Zero) {
@@ -18809,6 +26159,19 @@ return new multi_aff(res);
     throw new InvalidOperationException();
   }
 return new pw_multi_aff(res);
+}
+
+ public space domain_product(space right)
+{
+  if (get() == IntPtr.Zero || right.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_domain_product(copy(), right.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
 }
 
  public space domain_reverse()
@@ -18837,6 +26200,32 @@ return new space(res);
 return new id(res);
 }
 
+ public space domain_wrapped_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_domain_wrapped_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space domain_wrapped_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_domain_wrapped_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
  public space drop_all_params()
 {
   if (get() == IntPtr.Zero) {
@@ -18844,6 +26233,45 @@ return new id(res);
 
   }
   var res = Interop.isl_space_drop_all_params(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space drop_dims(dim_type type, uint first, uint num)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_drop_dims(copy(), type, first, num);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space factor_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_factor_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space factor_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_factor_range(copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -18870,6 +26298,32 @@ return new space(res);
 
   }
   var res = Interop.isl_space_flatten_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space from_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_from_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space from_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_from_range(copy());
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -18941,6 +26395,19 @@ return new multi_pw_aff(res);
 return new pw_multi_aff(res);
 }
 
+ public space insert_dims(dim_type type, uint pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_insert_dims(copy(), type, pos, n);
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
  public bool is_equal(space space2)
 {
   if (get() == IntPtr.Zero || space2.is_null()) {
@@ -18967,6 +26434,32 @@ return new pw_multi_aff(res);
   return res == isl_bool.True;
 }
 
+ public space join(space right)
+{
+  if (get() == IntPtr.Zero || right.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_join(copy(), right.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space map_from_domain_and_range(space range)
+{
+  if (get() == IntPtr.Zero || range.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_map_from_domain_and_range(copy(), range.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
  public space map_from_set()
 {
   if (get() == IntPtr.Zero) {
@@ -18974,6 +26467,19 @@ return new pw_multi_aff(res);
 
   }
   var res = Interop.isl_space_map_from_set(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space move_dims(dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n)
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_move_dims(copy(), dst_type, dst_pos, src_type, src_pos, n);
   if (res == IntPtr.Zero) {
     throw new InvalidOperationException();
   }
@@ -19118,6 +26624,45 @@ return new space(res);
 return new space(res);
 }
 
+ public space range_factor_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_range_factor_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space range_factor_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_range_factor_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space range_map()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_range_map(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
  public multi_aff range_map_multi_aff()
 {
   if (get() == IntPtr.Zero) {
@@ -19144,6 +26689,19 @@ return new multi_aff(res);
 return new pw_multi_aff(res);
 }
 
+ public space range_product(space right)
+{
+  if (get() == IntPtr.Zero || right.is_null()) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_range_product(copy(), right.copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
  public space range_reverse()
 {
   if (get() == IntPtr.Zero) {
@@ -19168,6 +26726,32 @@ return new space(res);
     throw new InvalidOperationException();
   }
 return new id(res);
+}
+
+ public space range_wrapped_domain()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_range_wrapped_domain(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
+}
+
+ public space range_wrapped_range()
+{
+  if (get() == IntPtr.Zero) {
+    throw new ArgumentNullException("NULL input");
+
+  }
+  var res = Interop.isl_space_range_wrapped_range(copy());
+  if (res == IntPtr.Zero) {
+    throw new InvalidOperationException();
+  }
+return new space(res);
 }
 
  public space reverse()
@@ -24374,7 +31958,7 @@ public static extern  IntPtr isl_ast_expr_free(IntPtr expr);
  public static extern  string isl_ast_expr_to_str(IntPtr expr);
 
 [DllImport(LibraryName)]
-public static extern  isl_ast_expr_type isl_ast_expr_get_type(IntPtr expr);
+public static extern  ast_expr_type isl_ast_expr_get_type(IntPtr expr);
 
 
 [DllImport(LibraryName)]
@@ -24392,7 +31976,7 @@ public static extern  IntPtr isl_ast_expr_op_get_arg(IntPtr expr, int pos);
 public static extern  int isl_ast_expr_op_get_n_arg(IntPtr expr);
 
 [DllImport(LibraryName)]
-public static extern  isl_ast_expr_op_type isl_ast_expr_op_get_type(IntPtr expr);
+public static extern  ast_expr_op_type isl_ast_expr_op_get_type(IntPtr expr);
 
 
 
@@ -24442,7 +32026,7 @@ public static extern  IntPtr isl_ast_node_free(IntPtr node);
  public static extern  string isl_ast_node_to_str(IntPtr node);
 
 [DllImport(LibraryName)]
-public static extern  isl_ast_node_type isl_ast_node_get_type(IntPtr node);
+public static extern  ast_node_type isl_ast_node_get_type(IntPtr node);
 
 
 [DllImport(LibraryName)]
@@ -24549,7 +32133,16 @@ public static extern  IntPtr isl_ast_node_user_get_expr(IntPtr node);
 public static extern  IntPtr isl_basic_map_read_from_str(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string str);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_add_constraint(IntPtr bmap, IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_add_dims(IntPtr bmap, dim_type type, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_affine_hull(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_align_params(IntPtr bmap, IntPtr model);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_apply_domain(IntPtr bmap1, IntPtr bmap2);
@@ -24558,10 +32151,82 @@ public static extern  IntPtr isl_basic_map_apply_domain(IntPtr bmap1, IntPtr bma
 public static extern  IntPtr isl_basic_map_apply_range(IntPtr bmap1, IntPtr bmap2);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_can_curry(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_can_uncurry(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_can_zip(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_compute_divs(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_get_constraint_list(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_curry(IntPtr bmap);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_deltas(IntPtr bmap);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_deltas_map(IntPtr bmap);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_detect_equalities(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_map_dim(IntPtr bmap, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_get_dim_name(IntPtr bmap, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_get_div(IntPtr bmap, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_domain(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_domain_map(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_drop_constraints_involving_dims(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_drop_constraints_not_involving_dims(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_drop_unused_params(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_eliminate(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_empty(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_equalities_matrix(IntPtr bmap, dim_type c1, dim_type c2, dim_type c3, dim_type c4, dim_type c5);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_equate(IntPtr bmap, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_map_find_dim_by_name(IntPtr bmap, dim_type type, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_fix_si(IntPtr bmap, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_fix_val(IntPtr bmap, dim_type type, uint pos, IntPtr v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_flat_product(IntPtr bmap1, IntPtr bmap2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_flat_range_product(IntPtr bmap1, IntPtr bmap2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_flatten(IntPtr bmap);
@@ -24573,7 +32238,52 @@ public static extern  IntPtr isl_basic_map_flatten_domain(IntPtr bmap);
 public static extern  IntPtr isl_basic_map_flatten_range(IntPtr bmap);
 
 [DllImport(LibraryName)]
+public static extern  isl_stat isl_basic_map_foreach_constraint(IntPtr bmap, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_aff(IntPtr aff);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_aff_list(IntPtr domain_space, IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_constraint(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_constraint_matrices(IntPtr space, IntPtr eq, IntPtr ineq, dim_type c1, dim_type c2, dim_type c3, dim_type c4, dim_type c5);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_domain(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_domain_and_range(IntPtr domain, IntPtr range);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_multi_aff(IntPtr maff);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_from_range(IntPtr bset);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_gist(IntPtr bmap, IntPtr context);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_gist_domain(IntPtr bmap, IntPtr context);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_has_dim_id(IntPtr bmap, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_identity(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_image_is_bounded(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_inequalities_matrix(IntPtr bmap, dim_type c1, dim_type c2, dim_type c3, dim_type c4, dim_type c5);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_insert_dims(IntPtr bmap, dim_type type, uint pos, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_intersect(IntPtr bmap1, IntPtr bmap2);
@@ -24588,13 +32298,34 @@ public static extern  IntPtr isl_basic_map_intersect_params(IntPtr bmap, IntPtr 
 public static extern  IntPtr isl_basic_map_intersect_range(IntPtr bmap, IntPtr bset);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_involves_dims(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_is_disjoint(IntPtr bmap1, IntPtr bmap2);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_basic_map_is_empty(IntPtr bmap);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_basic_map_is_equal(IntPtr bmap1, IntPtr bmap2);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_is_rational(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_is_single_valued(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_is_strict_subset(IntPtr bmap1, IntPtr bmap2);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_basic_map_is_subset(IntPtr bmap1, IntPtr bmap2);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_is_universe(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_less_at(IntPtr space, uint pos);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_lexmax(IntPtr bmap);
@@ -24603,13 +32334,97 @@ public static extern  IntPtr isl_basic_map_lexmax(IntPtr bmap);
 public static extern  IntPtr isl_basic_map_lexmin(IntPtr bmap);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_lower_bound_si(IntPtr bmap, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_more_at(IntPtr space, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_move_dims(IntPtr bmap, dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_map_n_constraint(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_nat_universe(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_neg(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_order_ge(IntPtr bmap, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_order_gt(IntPtr bmap, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_plain_is_empty(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_map_plain_is_universe(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_project_out(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_range(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_range_map(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_remove_dims(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_remove_divs(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_remove_divs_involving_dims(IntPtr bmap, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_remove_redundancies(IntPtr bmap);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_reverse(IntPtr bmap);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_sample(IntPtr bmap);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_set_dim_name(IntPtr bmap, dim_type type, uint pos, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_set_tuple_id(IntPtr bmap, dim_type type, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_set_tuple_name(IntPtr bmap, dim_type type, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_get_space(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_sum(IntPtr bmap1, IntPtr bmap2);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_map_total_dim(IntPtr bmap);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_get_tuple_name(IntPtr bmap, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_uncurry(IntPtr bmap);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_union(IntPtr bmap1, IntPtr bmap2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_universe(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_upper_bound_si(IntPtr bmap, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_zip(IntPtr bmap);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_map_copy(IntPtr bmap);
@@ -24623,28 +32438,114 @@ public static extern  IntPtr isl_basic_map_free(IntPtr bmap);
 
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_list_copy(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_map_list_free(IntPtr list);
+
+[DllImport(LibraryName)]
+[return: MarshalAs(UnmanagedType.LPStr)]
+ public static extern  string isl_basic_map_list_to_str(IntPtr list);
+
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_from_point(IntPtr pnt);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_read_from_str(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string str);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_add_constraint(IntPtr bset, IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_add_dims(IntPtr bset, dim_type type, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_affine_hull(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_align_params(IntPtr bset, IntPtr model);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_apply(IntPtr bset, IntPtr bmap);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_box_from_points(IntPtr pnt1, IntPtr pnt2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_coefficients(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_compute_divs(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_constraint_list(IntPtr bset);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_detect_equalities(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_set_dim(IntPtr bset, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_dim_id(IntPtr bset, dim_type type, uint pos);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_dim_max_val(IntPtr bset, int pos);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_dim_name(IntPtr bset, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_div(IntPtr bset, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_drop_constraints_involving_dims(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_drop_constraints_not_involving_dims(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_drop_unused_params(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_eliminate(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_equalities_matrix(IntPtr bset, dim_type c1, dim_type c2, dim_type c3, dim_type c4);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_fix_si(IntPtr bset, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_fix_val(IntPtr bset, dim_type type, uint pos, IntPtr v);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_flatten(IntPtr bset);
 
 [DllImport(LibraryName)]
+public static extern  isl_stat isl_basic_set_foreach_bound_pair(IntPtr bset, dim_type type, uint pos, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, IntPtr, IntPtr, isl_stat> fn, IntPtr user);
+
+[DllImport(LibraryName)]
+public static extern  isl_stat isl_basic_set_foreach_constraint(IntPtr bset, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_from_constraint(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_from_constraint_matrices(IntPtr space, IntPtr eq, IntPtr ineq, dim_type c1, dim_type c2, dim_type c3, dim_type c4);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_from_multi_aff(IntPtr ma);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_gist(IntPtr bset, IntPtr context);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_inequalities_matrix(IntPtr bset, dim_type c1, dim_type c2, dim_type c3, dim_type c4);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_insert_dims(IntPtr bset, dim_type type, uint pos, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_intersect(IntPtr bset1, IntPtr bset2);
@@ -24653,10 +32554,16 @@ public static extern  IntPtr isl_basic_set_intersect(IntPtr bset1, IntPtr bset2)
 public static extern  IntPtr isl_basic_set_intersect_params(IntPtr bset1, IntPtr bset2);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_basic_set_involves_dims(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_basic_set_is_empty(IntPtr bset);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_basic_set_is_equal(IntPtr bset1, IntPtr bset2);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_set_is_rational(IntPtr bset);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_basic_set_is_subset(IntPtr bset1, IntPtr bset2);
@@ -24671,7 +32578,61 @@ public static extern  IntPtr isl_basic_set_lexmax(IntPtr bset);
 public static extern  IntPtr isl_basic_set_lexmin(IntPtr bset);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_lift(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_local_space(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_lower_bound_val(IntPtr bset, dim_type type, uint pos, IntPtr value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_move_dims(IntPtr bset, dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_set_n_constraint(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_set_n_dim(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_set_n_param(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_nat_universe(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_neg(IntPtr bset);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_params(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_positive_orthant(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_preimage_multi_aff(IntPtr bset, IntPtr ma);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_project_out(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_reduced_basis(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_remove_dims(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_remove_divs(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_remove_divs_involving_dims(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_remove_redundancies(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_remove_unknown_divs(IntPtr bset);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_sample(IntPtr bset);
@@ -24680,10 +32641,43 @@ public static extern  IntPtr isl_basic_set_sample(IntPtr bset);
 public static extern  IntPtr isl_basic_set_sample_point(IntPtr bset);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_set_dim_name(IntPtr bset, dim_type type, uint pos, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_set_tuple_id(IntPtr bset, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_set_tuple_name(IntPtr set, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_solutions(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_space(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_to_list(IntPtr el);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_to_set(IntPtr bset);
 
 [DllImport(LibraryName)]
+public static extern  int isl_basic_set_total_dim(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_get_tuple_name(IntPtr bset);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_union(IntPtr bset1, IntPtr bset2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_universe(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_unwrap(IntPtr bset);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_upper_bound_val(IntPtr bset, dim_type type, uint pos, IntPtr value);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_basic_set_copy(IntPtr bset);
@@ -24694,6 +32688,183 @@ public static extern  IntPtr isl_basic_set_free(IntPtr bset);
 [DllImport(LibraryName)]
 [return: MarshalAs(UnmanagedType.LPStr)]
  public static extern  string isl_basic_set_to_str(IntPtr bset);
+
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_alloc(IntPtr ctx, int n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_from_basic_set(IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_add(IntPtr list, IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_get_at(IntPtr list, int index);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_clear(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_coefficients(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_concat(IntPtr list1, IntPtr list2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_drop(IntPtr list, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  isl_stat isl_basic_set_list_foreach(IntPtr list, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
+
+[DllImport(LibraryName)]
+public static extern  isl_stat isl_basic_set_list_foreach_scc(IntPtr list, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, IntPtr, isl_bool> follows, IntPtr follows_user, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr fn_user);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_insert(IntPtr list, uint pos, IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_set_at(IntPtr list, int index, IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  int isl_basic_set_list_size(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_copy(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_basic_set_list_free(IntPtr list);
+
+[DllImport(LibraryName)]
+[return: MarshalAs(UnmanagedType.LPStr)]
+ public static extern  string isl_basic_set_list_to_str(IntPtr list);
+
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_aff(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_alloc_equality(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_alloc_inequality(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_bound(IntPtr constraint, dim_type type, int pos);
+
+[DllImport(LibraryName)]
+public static extern  int isl_constraint_cmp_last_non_zero(IntPtr c1, IntPtr c2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_coefficient_val(IntPtr constraint, dim_type type, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_constant_val(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  int isl_constraint_dim(IntPtr constraint, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_dim_name(IntPtr constraint, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_div(IntPtr constraint, int pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_constraint_involves_dims(IntPtr constraint, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_constraint_is_div_constraint(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_constraint_is_equality(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_constraint_is_lower_bound(IntPtr constraint, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_constraint_is_upper_bound(IntPtr constraint, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_local_space(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_negate(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_set_coefficient_si(IntPtr constraint, dim_type type, int pos, int v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_set_coefficient_val(IntPtr constraint, dim_type type, int pos, IntPtr v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_set_constant_si(IntPtr constraint, int v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_set_constant_val(IntPtr constraint, IntPtr v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_get_space(IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_to_list(IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_copy(IntPtr c);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_free(IntPtr c);
+
+[DllImport(LibraryName)]
+[return: MarshalAs(UnmanagedType.LPStr)]
+ public static extern  string isl_constraint_to_str(IntPtr c);
+
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_alloc(IntPtr ctx, int n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_from_constraint(IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_add(IntPtr list, IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_get_at(IntPtr list, int index);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_clear(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_concat(IntPtr list1, IntPtr list2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_drop(IntPtr list, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  isl_stat isl_constraint_list_foreach(IntPtr list, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
+
+[DllImport(LibraryName)]
+public static extern  isl_stat isl_constraint_list_foreach_scc(IntPtr list, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, IntPtr, isl_bool> follows, IntPtr follows_user, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr fn_user);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_insert(IntPtr list, uint pos, IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_set_at(IntPtr list, int index, IntPtr el);
+
+[DllImport(LibraryName)]
+public static extern  int isl_constraint_list_size(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_copy(IntPtr list);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_constraint_list_free(IntPtr list);
+
+[DllImport(LibraryName)]
+[return: MarshalAs(UnmanagedType.LPStr)]
+ public static extern  string isl_constraint_list_to_str(IntPtr list);
 
 
 [DllImport(LibraryName)]
@@ -24726,8 +32897,7 @@ public static extern  IntPtr isl_fixed_box_free(IntPtr box);
 public static extern  IntPtr isl_id_read_from_str(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string str);
 
 [DllImport(LibraryName)]
-[return: MarshalAs(UnmanagedType.LPStr)]
- public static extern  string isl_id_get_name(IntPtr id);
+public static extern  IntPtr isl_id_get_name(IntPtr id);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_id_to_list(IntPtr el);
@@ -24840,13 +33010,111 @@ public static extern  IntPtr isl_id_to_id_free(IntPtr hmap);
 
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_add_dims(IntPtr ls, dim_type type, uint n);
+
+[DllImport(LibraryName)]
+public static extern  int isl_local_space_dim(IntPtr ls, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_get_dim_id(IntPtr ls, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_get_dim_name(IntPtr ls, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_get_div(IntPtr ls, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_domain(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_drop_dims(IntPtr ls, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  int isl_local_space_find_dim_by_name(IntPtr ls, dim_type type, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_flatten_domain(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_flatten_range(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_from_domain(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_from_space(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_local_space_has_dim_id(IntPtr ls, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_local_space_has_dim_name(IntPtr ls, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_insert_dims(IntPtr ls, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_intersect(IntPtr ls1, IntPtr ls2);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_local_space_is_params(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_local_space_is_set(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_lifting(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_range(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_set_dim_id(IntPtr ls, dim_type type, uint pos, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_set_dim_name(IntPtr ls, dim_type type, uint pos, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_set_from_params(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_set_tuple_id(IntPtr ls, dim_type type, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_get_space(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_wrap(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_copy(IntPtr ls);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_local_space_free(IntPtr ls);
+
+[DllImport(LibraryName)]
+[return: MarshalAs(UnmanagedType.LPStr)]
+ public static extern  string isl_local_space_to_str(IntPtr ls);
+
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_from_basic_map(IntPtr bmap);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_read_from_str(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string str);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_add_constraint(IntPtr map, IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_add_dims(IntPtr map, dim_type type, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_affine_hull(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_align_params(IntPtr map, IntPtr model);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_apply_domain(IntPtr map1, IntPtr map2);
@@ -24864,10 +33132,28 @@ public static extern  IntPtr isl_map_bind_domain(IntPtr map, IntPtr tuple);
 public static extern  IntPtr isl_map_bind_range(IntPtr map, IntPtr tuple);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_map_can_curry(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_can_range_curry(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_can_uncurry(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_can_zip(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_coalesce(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_complement(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_compute_divs(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_convex_hull(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_curry(IntPtr map);
@@ -24876,7 +33162,25 @@ public static extern  IntPtr isl_map_curry(IntPtr map);
 public static extern  IntPtr isl_map_deltas(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_deltas_map(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_detect_equalities(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  int isl_map_dim(IntPtr map, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_get_dim_id(IntPtr map, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_dim_max(IntPtr map, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_dim_min(IntPtr map, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_get_dim_name(IntPtr map, dim_type type, uint pos);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_domain(IntPtr bmap);
@@ -24886,6 +33190,12 @@ public static extern  IntPtr isl_map_domain_factor_domain(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_domain_factor_range(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_domain_is_wrapping(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_domain_map(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_domain_product(IntPtr map1, IntPtr map2);
@@ -24900,7 +33210,16 @@ public static extern  int isl_map_domain_tuple_dim(IntPtr map);
 public static extern  IntPtr isl_map_get_domain_tuple_id(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_drop_constraints_involving_dims(IntPtr map, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_drop_constraints_not_involving_dims(IntPtr map, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_drop_unused_params(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_eliminate(IntPtr map, dim_type type, uint first, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_empty(IntPtr space);
@@ -24909,13 +33228,40 @@ public static extern  IntPtr isl_map_empty(IntPtr space);
 public static extern  IntPtr isl_map_eq_at_multi_pw_aff(IntPtr map, IntPtr mpa);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_equate(IntPtr map, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_factor_domain(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_factor_range(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  int isl_map_find_dim_by_id(IntPtr map, dim_type type, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  int isl_map_find_dim_by_name(IntPtr map, dim_type type, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_fix_input_si(IntPtr map, uint input, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_fix_si(IntPtr map, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_fix_val(IntPtr map, dim_type type, uint pos, IntPtr v);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_fixed_power_val(IntPtr map, IntPtr exp);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_flat_domain_product(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_flat_product(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_flat_range_product(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_flatten(IntPtr map);
@@ -24927,10 +33273,31 @@ public static extern  IntPtr isl_map_flatten_domain(IntPtr map);
 public static extern  IntPtr isl_map_flatten_range(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_floordiv_val(IntPtr map, IntPtr d);
+
+[DllImport(LibraryName)]
 public static extern  isl_stat isl_map_foreach_basic_map(IntPtr map, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_from_aff(IntPtr aff);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_from_domain(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_from_domain_and_range(IntPtr domain, IntPtr range);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_from_multi_aff(IntPtr maff);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_from_range(IntPtr set);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_gist(IntPtr map, IntPtr context);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_gist_basic_map(IntPtr map, IntPtr context);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_gist_domain(IntPtr map, IntPtr context);
@@ -24939,10 +33306,28 @@ public static extern  IntPtr isl_map_gist_domain(IntPtr map, IntPtr context);
 public static extern  IntPtr isl_map_gist_params(IntPtr map, IntPtr context);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_map_has_dim_id(IntPtr map, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_has_dim_name(IntPtr map, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_map_has_domain_tuple_id(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_map_has_equal_space(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_map_has_range_tuple_id(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_has_tuple_name(IntPtr map, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_identity(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_insert_dims(IntPtr map, dim_type type, uint pos, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_intersect(IntPtr map1, IntPtr map2);
@@ -24975,6 +33360,9 @@ public static extern  IntPtr isl_map_intersect_range_factor_range(IntPtr map, In
 public static extern  IntPtr isl_map_intersect_range_wrapped_domain(IntPtr map, IntPtr domain);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_map_involves_dims(IntPtr map, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_map_is_bijective(IntPtr map);
 
 [DllImport(LibraryName)]
@@ -24987,7 +33375,13 @@ public static extern  isl_bool isl_map_is_empty(IntPtr map);
 public static extern  isl_bool isl_map_is_equal(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_map_is_identity(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_map_is_injective(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_is_product(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_map_is_single_valued(IntPtr map);
@@ -24999,16 +33393,55 @@ public static extern  isl_bool isl_map_is_strict_subset(IntPtr map1, IntPtr map2
 public static extern  isl_bool isl_map_is_subset(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
+public static extern  int isl_map_is_translation(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_ge(IntPtr set_space);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_lex_ge_at_multi_pw_aff(IntPtr map, IntPtr mpa);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_ge_first(IntPtr space, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_ge_map(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_gt(IntPtr set_space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_lex_gt_at_multi_pw_aff(IntPtr map, IntPtr mpa);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_gt_first(IntPtr space, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_gt_map(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_le(IntPtr set_space);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_lex_le_at_multi_pw_aff(IntPtr map, IntPtr mpa);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_le_first(IntPtr space, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_le_map(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_lt(IntPtr set_space);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_lex_lt_at_multi_pw_aff(IntPtr map, IntPtr mpa);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_lt_first(IntPtr space, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lex_lt_map(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_lexmax(IntPtr map);
@@ -25026,16 +33459,67 @@ public static extern  IntPtr isl_map_lexmin_pw_multi_aff(IntPtr map);
 public static extern  IntPtr isl_map_lower_bound_multi_pw_aff(IntPtr map, IntPtr lower);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lower_bound_si(IntPtr map, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_lower_bound_val(IntPtr map, dim_type type, uint pos, IntPtr value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_make_disjoint(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_max_multi_pw_aff(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_min_multi_pw_aff(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_move_dims(IntPtr map, dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n);
+
+[DllImport(LibraryName)]
 public static extern  int isl_map_n_basic_map(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_nat_universe(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_neg(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_oppose(IntPtr map, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_order_ge(IntPtr map, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_order_gt(IntPtr map, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_order_le(IntPtr map, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_order_lt(IntPtr map, dim_type type1, int pos1, dim_type type2, int pos2);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_params(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_plain_get_val_if_fixed(IntPtr map, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_plain_is_empty(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_plain_is_injective(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_plain_is_single_valued(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_map_plain_is_universe(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_plain_unshifted_simple_hull(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_polyhedral_hull(IntPtr map);
@@ -25059,6 +33543,9 @@ public static extern  IntPtr isl_map_preimage_range_pw_multi_aff(IntPtr map, Int
 public static extern  IntPtr isl_map_product(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_project_out(IntPtr map, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_project_out_all_params(IntPtr map);
 
 [DllImport(LibraryName)]
@@ -25071,13 +33558,22 @@ public static extern  IntPtr isl_map_project_out_param_id_list(IntPtr map, IntPt
 public static extern  IntPtr isl_map_range(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_range_curry(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_range_factor_domain(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_range_factor_range(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_map_range_is_wrapping(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_get_range_lattice_tile(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_range_map(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_range_product(IntPtr map1, IntPtr map2);
@@ -25095,10 +33591,34 @@ public static extern  int isl_map_range_tuple_dim(IntPtr map);
 public static extern  IntPtr isl_map_get_range_tuple_id(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_remove_dims(IntPtr map, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_remove_divs(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_remove_divs_involving_dims(IntPtr map, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_remove_inputs(IntPtr map, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_remove_redundancies(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_remove_unknown_divs(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_reverse(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_sample(IntPtr map);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_set_dim_id(IntPtr map, dim_type type, uint pos, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_set_dim_name(IntPtr map, dim_type type, uint pos, [MarshalAs(UnmanagedType.LPStr)] string s);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_set_domain_tuple_id(IntPtr map, IntPtr id);
@@ -25107,10 +33627,28 @@ public static extern  IntPtr isl_map_set_domain_tuple_id(IntPtr map, IntPtr id);
 public static extern  IntPtr isl_map_set_range_tuple_id(IntPtr map, IntPtr id);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_set_tuple_id(IntPtr map, dim_type type, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_set_tuple_name(IntPtr map, dim_type type, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_simple_hull(IntPtr map);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_get_space(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_subtract(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_subtract_domain(IntPtr map, IntPtr dom);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_subtract_range(IntPtr map, IntPtr dom);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_sum(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_to_list(IntPtr el);
@@ -25119,10 +33657,16 @@ public static extern  IntPtr isl_map_to_list(IntPtr el);
 public static extern  IntPtr isl_map_to_union_map(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_get_tuple_name(IntPtr map, dim_type type);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_uncurry(IntPtr map);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_union(IntPtr map1, IntPtr map2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_union_disjoint(IntPtr map1, IntPtr map2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_universe(IntPtr space);
@@ -25131,7 +33675,16 @@ public static extern  IntPtr isl_map_universe(IntPtr space);
 public static extern  IntPtr isl_map_unshifted_simple_hull(IntPtr map);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_map_unshifted_simple_hull_from_map_list(IntPtr map, IntPtr list);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_map_upper_bound_multi_pw_aff(IntPtr map, IntPtr upper);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_upper_bound_si(IntPtr map, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_map_upper_bound_val(IntPtr map, dim_type type, uint pos, IntPtr value);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_map_wrap(IntPtr map);
@@ -25198,6 +33751,115 @@ public static extern  IntPtr isl_map_list_free(IntPtr list);
 [DllImport(LibraryName)]
 [return: MarshalAs(UnmanagedType.LPStr)]
  public static extern  string isl_map_list_to_str(IntPtr list);
+
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_add_rows(IntPtr mat, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_add_zero_cols(IntPtr mat, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_add_zero_rows(IntPtr mat, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_aff_direct_sum(IntPtr left, IntPtr right);
+
+[DllImport(LibraryName)]
+public static extern  int isl_mat_cols(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_concat(IntPtr top, IntPtr bot);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_diagonal(IntPtr mat1, IntPtr mat2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_drop_cols(IntPtr mat, uint col, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_drop_rows(IntPtr mat, uint row, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_get_element_val(IntPtr mat, int row, int col);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_mat_has_linearly_independent_rows(IntPtr mat1, IntPtr mat2);
+
+[DllImport(LibraryName)]
+public static extern  int isl_mat_initial_non_zero_cols(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_insert_cols(IntPtr mat, uint col, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_insert_rows(IntPtr mat, uint row, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_insert_zero_cols(IntPtr mat, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_insert_zero_rows(IntPtr mat, uint row, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_inverse_product(IntPtr left, IntPtr right);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_lin_to_aff(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_move_cols(IntPtr mat, uint dst_col, uint src_col, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_normalize(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_normalize_row(IntPtr mat, int row);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_product(IntPtr left, IntPtr right);
+
+[DllImport(LibraryName)]
+public static extern  int isl_mat_rank(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_right_inverse(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_right_kernel(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_row_basis(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_row_basis_extension(IntPtr mat1, IntPtr mat2);
+
+[DllImport(LibraryName)]
+public static extern  int isl_mat_rows(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_set_element_si(IntPtr mat, int row, int col, int v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_set_element_val(IntPtr mat, int row, int col, IntPtr v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_swap_cols(IntPtr mat, uint i, uint j);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_swap_rows(IntPtr mat, uint i, uint j);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_transpose(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_unimodular_complete(IntPtr M, int row);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_copy(IntPtr mat);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_mat_free(IntPtr mat);
 
 
 [DllImport(LibraryName)]
@@ -25790,7 +34452,19 @@ public static extern  IntPtr isl_multi_val_free(IntPtr multi);
 
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_point_add_ui(IntPtr pnt, dim_type type, int pos, uint val);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_point_get_coordinate_val(IntPtr pnt, dim_type type, int pos);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_point_get_multi_val(IntPtr pnt);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_point_set_coordinate_val(IntPtr pnt, dim_type type, int pos, IntPtr v);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_point_sub_ui(IntPtr pnt, dim_type type, int pos, uint val);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_point_to_set(IntPtr pnt);
@@ -26465,7 +35139,7 @@ public static extern  IntPtr isl_schedule_node_free(IntPtr node);
  public static extern  string isl_schedule_node_to_str(IntPtr node);
 
 [DllImport(LibraryName)]
-public static extern  isl_schedule_node_type isl_schedule_node_get_type(IntPtr node);
+public static extern  schedule_node_type isl_schedule_node_get_type(IntPtr node);
 
 
 [DllImport(LibraryName)]
@@ -26514,7 +35188,7 @@ public static extern  IntPtr isl_schedule_node_band_split(IntPtr node, int pos);
 public static extern  IntPtr isl_schedule_node_band_tile(IntPtr node, IntPtr sizes);
 
 [DllImport(LibraryName)]
-public static extern  IntPtr isl_schedule_node_band_member_set_ast_loop_type(IntPtr node, int pos, int type);
+public static extern  IntPtr isl_schedule_node_band_member_set_ast_loop_type(IntPtr node, int pos, ast_loop_type type);
 
 
 [DllImport(LibraryName)]
@@ -26558,7 +35232,16 @@ public static extern  IntPtr isl_set_from_point(IntPtr pnt);
 public static extern  IntPtr isl_set_read_from_str(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string str);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_add_constraint(IntPtr set, IntPtr constraint);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_add_dims(IntPtr set, dim_type type, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_affine_hull(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_align_params(IntPtr set, IntPtr model);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_apply(IntPtr set, IntPtr map);
@@ -26567,31 +35250,106 @@ public static extern  IntPtr isl_set_apply(IntPtr set, IntPtr map);
 public static extern  IntPtr isl_set_as_pw_multi_aff(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_get_basic_set_list(IntPtr set);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_bind(IntPtr set, IntPtr tuple);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_box_from_points(IntPtr pnt1, IntPtr pnt2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_coalesce(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_coefficients(IntPtr set);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_complement(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_compute_divs(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_count_val(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_detect_equalities(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  int isl_set_dim(IntPtr set, dim_type type);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_dim_has_any_lower_bound(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_dim_has_any_upper_bound(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_dim_has_lower_bound(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_dim_has_upper_bound(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_get_dim_id(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_dim_is_bounded(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_dim_max(IntPtr set, int pos);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_dim_max_val(IntPtr set, int pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_dim_min(IntPtr set, int pos);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_dim_min_val(IntPtr set, int pos);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_get_dim_name(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_drop_constraints_involving_dims(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_drop_constraints_not_involving_dims(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_drop_unused_params(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_eliminate(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_eliminate_dims(IntPtr set, uint first, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_empty(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  int isl_set_find_dim_by_id(IntPtr set, dim_type type, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  int isl_set_find_dim_by_name(IntPtr set, dim_type type, [MarshalAs(UnmanagedType.LPStr)] string name);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_fix_dim_si(IntPtr set, uint dim, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_fix_si(IntPtr set, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_fix_val(IntPtr set, dim_type type, uint pos, IntPtr v);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_flatten(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_flatten_map(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  isl_stat isl_set_foreach_basic_set(IntPtr set, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
@@ -26600,16 +35358,40 @@ public static extern  isl_stat isl_set_foreach_basic_set(IntPtr set, [MarshalAs(
 public static extern  isl_stat isl_set_foreach_point(IntPtr set, [MarshalAs(UnmanagedType.FunctionPtr)] Func<IntPtr, IntPtr, isl_stat> fn, IntPtr user);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_from_multi_aff(IntPtr ma);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_gist(IntPtr set, IntPtr context);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_gist_basic_set(IntPtr set, IntPtr context);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_gist_params(IntPtr set, IntPtr context);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_has_dim_id(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_has_dim_name(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_has_equal_space(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_has_tuple_id(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_has_tuple_name(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_identity(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_indicator_function(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_insert_dims(IntPtr set, dim_type type, uint pos, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_insert_domain(IntPtr set, IntPtr domain);
@@ -26621,7 +35403,16 @@ public static extern  IntPtr isl_set_intersect(IntPtr set1, IntPtr set2);
 public static extern  IntPtr isl_set_intersect_params(IntPtr set, IntPtr params_);
 
 [DllImport(LibraryName)]
+public static extern  isl_bool isl_set_involves_dims(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_set_involves_locals(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_is_bounded(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_is_box(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_set_is_disjoint(IntPtr set1, IntPtr set2);
@@ -26631,6 +35422,9 @@ public static extern  isl_bool isl_set_is_empty(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_set_is_equal(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_is_params(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_set_is_singleton(IntPtr set);
@@ -26648,6 +35442,18 @@ public static extern  isl_bool isl_set_is_wrapping(IntPtr set);
 public static extern  IntPtr isl_set_get_lattice_tile(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lex_ge_set(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lex_gt_set(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lex_le_set(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lex_lt_set(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_lexmax(IntPtr set);
 
 [DllImport(LibraryName)]
@@ -26660,10 +35466,22 @@ public static extern  IntPtr isl_set_lexmin(IntPtr set);
 public static extern  IntPtr isl_set_lexmin_pw_multi_aff(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lift(IntPtr set);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_lower_bound_multi_pw_aff(IntPtr set, IntPtr lower);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_lower_bound_multi_val(IntPtr set, IntPtr lower);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lower_bound_si(IntPtr set, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_lower_bound_val(IntPtr set, dim_type type, uint pos, IntPtr value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_make_disjoint(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_max_multi_pw_aff(IntPtr set);
@@ -26678,13 +35496,37 @@ public static extern  IntPtr isl_set_min_multi_pw_aff(IntPtr set);
 public static extern  IntPtr isl_set_min_val(IntPtr set, IntPtr obj);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_move_dims(IntPtr set, dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n);
+
+[DllImport(LibraryName)]
 public static extern  int isl_set_n_basic_set(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  int isl_set_n_dim(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  int isl_set_n_param(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_neg(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_param_pw_aff_on_domain_id(IntPtr domain, IntPtr id);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_params(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_plain_get_val_if_fixed(IntPtr set, dim_type type, uint pos);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_plain_is_disjoint(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_plain_is_empty(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  isl_bool isl_set_plain_is_universe(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_get_plain_multi_val_if_fixed(IntPtr set);
@@ -26705,6 +35547,12 @@ public static extern  IntPtr isl_set_preimage_pw_multi_aff(IntPtr set, IntPtr pm
 public static extern  IntPtr isl_set_product(IntPtr set1, IntPtr set2);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_project_onto_map(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_project_out(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_project_out_all_params(IntPtr set);
 
 [DllImport(LibraryName)]
@@ -26720,22 +35568,70 @@ public static extern  IntPtr isl_set_pw_aff_on_domain_val(IntPtr domain, IntPtr 
 public static extern  IntPtr isl_set_pw_multi_aff_on_domain_multi_val(IntPtr domain, IntPtr mv);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_remove_dims(IntPtr bset, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_remove_divs(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_remove_divs_involving_dims(IntPtr set, dim_type type, uint first, uint n);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_remove_redundancies(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_remove_unknown_divs(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_reset_space(IntPtr set, IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_reset_tuple_id(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_reset_user(IntPtr set);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_sample(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_sample_point(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_set_dim_id(IntPtr set, dim_type type, uint pos, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_set_dim_name(IntPtr set, dim_type type, uint pos, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_set_tuple_id(IntPtr set, IntPtr id);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_set_tuple_name(IntPtr set, [MarshalAs(UnmanagedType.LPStr)] string s);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_get_simple_fixed_box_hull(IntPtr set);
 
 [DllImport(LibraryName)]
+public static extern  int isl_set_size(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_solutions(IntPtr set);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_get_space(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_split_dims(IntPtr set, dim_type type, uint first, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_get_stride(IntPtr set, int pos);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_subtract(IntPtr set1, IntPtr set2);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_sum(IntPtr set1, IntPtr set2);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_to_list(IntPtr el);
@@ -26748,6 +35644,12 @@ public static extern  IntPtr isl_set_translation(IntPtr deltas);
 
 [DllImport(LibraryName)]
 public static extern  int isl_set_tuple_dim(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_get_tuple_id(IntPtr set);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_get_tuple_name(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_unbind_params(IntPtr set, IntPtr tuple);
@@ -26772,6 +35674,15 @@ public static extern  IntPtr isl_set_upper_bound_multi_pw_aff(IntPtr set, IntPtr
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_upper_bound_multi_val(IntPtr set, IntPtr upper);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_upper_bound_si(IntPtr set, dim_type type, uint pos, int value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_upper_bound_val(IntPtr set, dim_type type, uint pos, IntPtr value);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_set_wrapped_domain_map(IntPtr set);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_set_wrapped_reverse(IntPtr set);
@@ -26827,6 +35738,9 @@ public static extern  IntPtr isl_set_list_set_at(IntPtr list, int index, IntPtr 
 public static extern  int isl_set_list_size(IntPtr list);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_set_list_union(IntPtr list);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_set_list_copy(IntPtr list);
 
 [DllImport(LibraryName)]
@@ -26839,6 +35753,9 @@ public static extern  IntPtr isl_set_list_free(IntPtr list);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_read_from_str(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string str);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_add_dims(IntPtr space, dim_type type, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_add_named_tuple_id_ui(IntPtr space, IntPtr tuple_id, uint dim);
@@ -26856,10 +35773,22 @@ public static extern  IntPtr isl_space_curry(IntPtr space);
 public static extern  IntPtr isl_space_domain(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_space_domain_factor_domain(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_domain_factor_range(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_domain_map(IntPtr space);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_space_domain_map_multi_aff(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_domain_map_pw_multi_aff(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_domain_product(IntPtr left, IntPtr right);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_domain_reverse(IntPtr space);
@@ -26868,13 +35797,34 @@ public static extern  IntPtr isl_space_domain_reverse(IntPtr space);
 public static extern  IntPtr isl_space_get_domain_tuple_id(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_space_domain_wrapped_domain(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_domain_wrapped_range(IntPtr space);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_space_drop_all_params(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_drop_dims(IntPtr space, dim_type type, uint first, uint num);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_factor_domain(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_factor_range(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_flatten_domain(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_flatten_range(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_from_domain(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_from_range(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_space_has_domain_tuple_id(IntPtr space);
@@ -26892,13 +35842,25 @@ public static extern  IntPtr isl_space_identity_multi_pw_aff_on_domain(IntPtr sp
 public static extern  IntPtr isl_space_identity_pw_multi_aff_on_domain(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_space_insert_dims(IntPtr space, dim_type type, uint pos, uint n);
+
+[DllImport(LibraryName)]
 public static extern  isl_bool isl_space_is_equal(IntPtr space1, IntPtr space2);
 
 [DllImport(LibraryName)]
 public static extern  isl_bool isl_space_is_wrapping(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_space_join(IntPtr left, IntPtr right);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_map_from_domain_and_range(IntPtr domain, IntPtr range);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_space_map_from_set(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_move_dims(IntPtr space, dim_type dst_type, uint dst_pos, dim_type src_type, uint src_pos, uint n);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_multi_aff(IntPtr space, IntPtr list);
@@ -26931,16 +35893,34 @@ public static extern  IntPtr isl_space_product(IntPtr left, IntPtr right);
 public static extern  IntPtr isl_space_range(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_space_range_factor_domain(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_range_factor_range(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_range_map(IntPtr space);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_space_range_map_multi_aff(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_range_map_pw_multi_aff(IntPtr space);
 
 [DllImport(LibraryName)]
+public static extern  IntPtr isl_space_range_product(IntPtr left, IntPtr right);
+
+[DllImport(LibraryName)]
 public static extern  IntPtr isl_space_range_reverse(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_get_range_tuple_id(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_range_wrapped_domain(IntPtr space);
+
+[DllImport(LibraryName)]
+public static extern  IntPtr isl_space_range_wrapped_range(IntPtr space);
 
 [DllImport(LibraryName)]
 public static extern  IntPtr isl_space_reverse(IntPtr space);
@@ -27782,7 +36762,7 @@ public static extern  IntPtr isl_union_set_list_free(IntPtr list);
 
 [DllImport(LibraryName)]
 [return: MarshalAs(UnmanagedType.LPStr)]
-public static extern  string isl_union_set_list_to_str(IntPtr list);
+ public static extern  string isl_union_set_list_to_str(IntPtr list);
 
 
 [DllImport(LibraryName)]

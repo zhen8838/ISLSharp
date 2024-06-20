@@ -1,68 +1,79 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace ISLSharp.isl;
+namespace IntegerSetLibrary;
 
-public enum isl_ast_expr_type : int
+public enum ast_expr_type : int
 {
-    isl_ast_expr_error = -1,
-    isl_ast_expr_op,
-    isl_ast_expr_id,
-    isl_ast_expr_int
+    error = -1,
+    op,
+    id,
+    int_
 }
 
-public enum isl_ast_node_type : int
+public enum dim_type : int
 {
-    isl_ast_expr_error = -1,
-    isl_ast_expr_op,
-    isl_ast_expr_id,
-    isl_ast_expr_int
-}
-
-public enum isl_ast_expr_op_type : int
-{
-    isl_ast_expr_op_error = -1,
-    isl_ast_expr_op_and,
-    isl_ast_expr_op_and_then,
-    isl_ast_expr_op_or,
-    isl_ast_expr_op_or_else,
-    isl_ast_expr_op_max,
-    isl_ast_expr_op_min,
-    isl_ast_expr_op_minus,
-    isl_ast_expr_op_add,
-    isl_ast_expr_op_sub,
-    isl_ast_expr_op_mul,
-    isl_ast_expr_op_div,
-    isl_ast_expr_op_fdiv_q, /* Round towards -infty */
-    isl_ast_expr_op_pdiv_q, /* Dividend is non-negative */
-    isl_ast_expr_op_pdiv_r, /* Dividend is non-negative */
-    isl_ast_expr_op_zdiv_r, /* Result only compared against zero */
-    isl_ast_expr_op_cond,
-    isl_ast_expr_op_select,
-    isl_ast_expr_op_eq,
-    isl_ast_expr_op_le,
-    isl_ast_expr_op_lt,
-    isl_ast_expr_op_ge,
-    isl_ast_expr_op_gt,
-    isl_ast_expr_op_call,
-    isl_ast_expr_op_access,
-    isl_ast_expr_op_member,
-    isl_ast_expr_op_address_of
+    cst,
+    param,
+    in_,
+    out_,
+    set = out_,
+    div,
+    all
 };
 
-public enum isl_schedule_node_type : int
+public enum ast_node_type : int
 {
-    isl_schedule_node_error = -1,
-    isl_schedule_node_band,
-    isl_schedule_node_context,
-    isl_schedule_node_domain,
-    isl_schedule_node_expansion,
-    isl_schedule_node_extension,
-    isl_schedule_node_filter,
-    isl_schedule_node_leaf,
-    isl_schedule_node_guard,
-    isl_schedule_node_mark,
-    isl_schedule_node_sequence,
-    isl_schedule_node_set
+    error = -1,
+    op,
+    id,
+    int_
+}
+
+public enum ast_expr_op_type : int
+{
+    error = -1,
+    and,
+    and_then,
+    or,
+    or_else,
+    max,
+    min,
+    minus,
+    add,
+    sub,
+    mul,
+    div,
+    fdiv_q, /* Round towards -infty */
+    pdiv_q, /* Dividend is non-negative */
+    pdiv_r, /* Dividend is non-negative */
+    zdiv_r, /* Result only compared against zero */
+    cond,
+    select,
+    eq,
+    le,
+    lt,
+    ge,
+    gt,
+    call,
+    access,
+    member,
+    address_of
+};
+
+public enum schedule_node_type : int
+{
+    error = -1,
+    band,
+    context,
+    domain,
+    expansion,
+    extension,
+    filter,
+    leaf,
+    guard,
+    mark,
+    sequence,
+    set
 };
 
 public enum isl_stat : int
@@ -79,7 +90,7 @@ public enum isl_bool : int
 }
 
 
-public enum isl_ast_loop_type : int
+public enum ast_loop_type : int
 {
     Error = -1,
     Default = 0,
@@ -95,7 +106,9 @@ internal interface IObject
     bool is_null();
 }
 
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 public sealed class ctx : IDisposable, IObject
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 {
     private IntPtr ptr = IntPtr.Zero;
 
