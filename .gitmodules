@@ -1,3 +1,4 @@
 [submodule "isl"]
 	path = isl
 	url = https://github.com/zhen8838/isl.git
+  branch = v0.1.4
