@@ -60,4 +60,49 @@ jobs:
         name: ${{ matrix.config.name }}
         path: ${{ github.workspace }}/isl/install
         if-no-files-found: error
-  
+
+  pack-and-publish:
+    needs: build-native
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0'
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Update package versions
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        sed -i "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.linux-x64/libisl.linux-x64.nuspec
+        sed -i "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.osx-x64/libisl.osx-x64.nuspec
+        sed -i "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.osx-arm64/libisl.osx-arm64.nuspec
+
+    - name: Pack NuGet Native packages
+      run: |
+        mkdir -p out/packages
+        nuget pack packages/libisl.linux-x64 -BasePath $(pwd) -OutputDirectory $(pwd)/out/packages
+        nuget pack packages/libisl.osx-x64 -BasePath $(pwd) -OutputDirectory $(pwd)/out/packages  
+        nuget pack packages/libisl.osx-arm64 -BasePath $(pwd) -OutputDirectory $(pwd)/out/packages
+
+    - name: Publish Native to NuGet
+      run: |
+        for pkg in out/packages/*.nupkg; do
+          dotnet nuget push "$pkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        done
+
+    # - name: Build and pack main library
+    #   run: |
+    #     VERSION=${GITHUB_REF#refs/tags/v}
+    #     dotnet pack ISLSharp/ISLSharp.csproj -c Release -p:PackageVersion=$VERSION -o out/packages
+
+    # - name: Publish main library to NuGet
+    #   run: |
+    #     dotnet nuget push out/packages/ISLSharp.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
