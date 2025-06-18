@@ -3,6 +3,9 @@ name: build isl
 on: 
   push: 
     branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    types: [opened, reopened]
 
   workflow_dispatch:
     inputs:
@@ -21,7 +24,6 @@ jobs:
           - { name: osx-arm64, os: macos-14 }
           - { name: osx-x64, os: macos-latest }
           - { name: linux-x64, os: ubuntu-latest }
-          # - {name: windows-x64, os: windows-latest, arch: x64}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -53,7 +55,7 @@ jobs:
         make install -j
       shell: bash
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with: 
         name: ${{ matrix.config.name }}
         path: ${{ github.workspace }}/isl/install
