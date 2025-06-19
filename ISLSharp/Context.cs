@@ -99,44 +99,73 @@ public enum ast_loop_type : int
     Separate
 }
 
-internal interface IObject
+public abstract class IntrusiveHandle : SafeHandle
 {
-    IntPtr copy();
-    IntPtr get();
-    bool is_null();
+    protected IntrusiveHandle(IntPtr handle, bool ownsHandle = true) : base(handle, ownsHandle)
+    {
+    }
+
+    public override bool IsInvalid => handle == IntPtr.Zero;
+
+    internal abstract IntPtr IncreaseReference();
 }
 
 #pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
-public sealed class ctx : IDisposable, IObject
+public sealed class ctx : IntrusiveHandle
 #pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 {
-    private IntPtr ptr = IntPtr.Zero;
+    private static readonly AsyncLocal<ctx?> _currentContext = new AsyncLocal<ctx?>();
 
-    public ctx()
+    private ctx() : base(IntPtr.Zero, true)
     {
-        ptr = Interop.isl_ctx_alloc();
-        if (ptr == IntPtr.Zero)
+        SetHandle(Interop.isl_ctx_alloc());
+        if (IsInvalid)
         {
-            throw new InvalidDataException();
+            throw new InvalidDataException("Failed to allocate isl_ctx");
         }
     }
 
-    public static ctx Instance { get; } = new();
+    public static ctx Create()
+    {
+        if (_currentContext.Value != null)
+        {
+            throw new InvalidOperationException("A context is already set for this thread.");
+        }
 
-    public nint copy()
+        var newContext = new ctx();
+        _currentContext.Value = newContext;
+        return newContext;
+    }
+
+    public static ctx Current
+    {
+        get
+        {
+            return _currentContext.Value ?? throw new InvalidOperationException("No context is set for this thread.");
+        }
+    }
+
+    public override bool IsInvalid => handle == IntPtr.Zero;
+
+    internal override IntPtr IncreaseReference()
     {
         throw new NotSupportedException();
     }
 
-    public void Dispose()
+    protected override bool ReleaseHandle()
     {
-        Interop.isl_ctx_free(ptr);
-        ptr = IntPtr.Zero;
+        Interop.isl_ctx_free(handle);
+        return true;
     }
 
-    public nint get() => ptr;
-
-    public bool is_null() => ptr == IntPtr.Zero;
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            _currentContext.Value = null;
+        }
+    }
 }
 
 internal static partial class Interop
@@ -147,7 +176,7 @@ internal static partial class Interop
     public static extern IntPtr isl_ctx_alloc();
 
     [DllImport(LibraryName)]
-    public static extern IntPtr isl_ctx_free(IntPtr ctx);
+    public static extern void isl_ctx_free(IntPtr ctx);
 
     [DllImport(LibraryName)]
     public static extern IntPtr isl_id_alloc(IntPtr ctx, IntPtr arg0, IntPtr arg1);
