@@ -87,9 +87,9 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/v')
       run: |
         VERSION=${GITHUB_REF#refs/tags/v}
-        sed -i "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.linux-x64/libisl.linux-x64.nuspec
-        sed -i "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.osx-x64/libisl.osx-x64.nuspec
-        sed -i "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.osx-arm64/libisl.osx-arm64.nuspec
+        sed -i.bak "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.linux-x64/libisl.linux-x64.nuspec
+        sed -i.bak "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.osx-x64/libisl.osx-x64.nuspec
+        sed -i.bak "s/<version>0.0.1<\/version>/<version>$VERSION<\/version>/g" packages/libisl.osx-arm64/libisl.osx-arm64.nuspec
 
     - name: Pack NuGet Native packages
       run: |
