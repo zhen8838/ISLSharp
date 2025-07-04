@@ -116,9 +116,12 @@ public sealed class ctx : IntrusiveHandle
 {
     private static readonly AsyncLocal<ctx?> _currentContext = new AsyncLocal<ctx?>();
 
+    private readonly List<IntrusiveHandle> _objectHandles;
+
     private ctx() : base(IntPtr.Zero, true)
     {
         SetHandle(Interop.isl_ctx_alloc());
+        _objectHandles = new();
         if (IsInvalid)
         {
             throw new InvalidDataException("Failed to allocate isl_ctx");
@@ -160,12 +163,19 @@ public sealed class ctx : IntrusiveHandle
 
     protected override void Dispose(bool disposing)
     {
+        foreach (var obj in _objectHandles)
+        {
+            obj.Dispose();
+        }
+        _objectHandles.Clear();
         base.Dispose(disposing);
         if (disposing)
         {
             _currentContext.Value = null;
         }
     }
+
+    public void AddObjectHandle(IntrusiveHandle handle) => _objectHandles.Add(handle);
 }
 
 internal static partial class Interop
