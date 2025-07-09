@@ -12,9 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="libisl.linux-x64" Version="0.0.3" />
-    <PackageReference Include="libisl.osx-x64" Version="0.0.3" />
-    <PackageReference Include="libisl.osx-arm64" Version="0.0.3" />
+    <PackageReference Include="libisl.linux-x64" Version="0.0.4" />
+    <PackageReference Include="libisl.osx-x64" Version="0.0.4" />
+    <PackageReference Include="libisl.osx-arm64" Version="0.0.4" />
   </ItemGroup>
 
 </Project>

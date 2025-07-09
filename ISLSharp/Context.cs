@@ -111,7 +111,7 @@ public abstract class IntrusiveHandle : SafeHandle
 }
 
 #pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
-public sealed class ctx : IntrusiveHandle
+public sealed partial class ctx : IntrusiveHandle
 #pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 {
     private static readonly AsyncLocal<ctx?> _currentContext = new AsyncLocal<ctx?>();
