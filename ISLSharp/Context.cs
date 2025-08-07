@@ -118,6 +118,8 @@ public sealed partial class ctx : IntrusiveHandle
 
     private readonly List<IntrusiveHandle> _objectHandles;
 
+    private ctx? _originalContext;
+
     private ctx() : base(IntPtr.Zero, true)
     {
         SetHandle(Interop.isl_ctx_alloc());
@@ -130,12 +132,11 @@ public sealed partial class ctx : IntrusiveHandle
 
     public static ctx Create()
     {
-        if (_currentContext.Value != null)
-        {
-            throw new InvalidOperationException("A context is already set for this thread.");
-        }
-
         var newContext = new ctx();
+        if (_currentContext.Value is ctx originalContext)
+        {
+            newContext._originalContext = originalContext;
+        }
         _currentContext.Value = newContext;
         return newContext;
     }
@@ -171,8 +172,9 @@ public sealed partial class ctx : IntrusiveHandle
         base.Dispose(disposing);
         if (disposing)
         {
-            _currentContext.Value = null;
+            _currentContext.Value = _originalContext;
         }
+        _originalContext = null;
     }
 
     public void AddObjectHandle(IntrusiveHandle handle) => _objectHandles.Add(handle);
